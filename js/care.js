@@ -17,13 +17,14 @@ C.open = function (id) {
   if (s.active.indexOf(id) < 0) { if (s.active.length >= 3) s.active.pop(); s.active.unshift(id); G.persist(); G.syncLooks(); }
   G.closePanel(); GS.goal = null; GS.joyReset && GS.joyReset();
   GS.care = { id, ready: false, mode: 'hand', t: 0, rubAcc: 0, rubCoins: 0, hearts: 0, fetch: null, sleeping: false, eating: 0, callCd: 0, trickCd: 0, lastTap: 0, cool: {} };
-  $('care').classList.remove('hidden'); C.setMode('hand'); renderBtns(); Snd.fx('click');
+  $('care').classList.remove('hidden'); document.body.classList.add('incare'); C.setMode('hand'); renderBtns(); Snd.fx('click');
 };
 function setup() {
   const c = GS.care, o = o3(); if (!o) return false;
   const A = W.cur, m = GS.me, s = Math.max(0.5, o.P.hTop);
   let sx = m.x + Math.sin(m.yaw) * 1.3, sz = m.z + Math.cos(m.yaw) * 1.3; const f = W.freeNear(A, sx, sz, 0.35); sx = f[0]; sz = f[1];
   const dist = 1.7 + s * 1.5;
+  if (A.w) { sz = Math.min(sz, A.d / 2 - dist * 0.8); sx = clamp(sx, -A.w / 2 + 1, A.w / 2 - 1); const f2 = W.freeNear(A, sx, sz, 0.35); sx = f2[0]; sz = f2[1]; if (A.exitSprite) A.exitSprite.visible = false; }
   let dir = [0, 1];
   if (!A.w) { const cands = [[0, 1], [1, 0], [-1, 0], [0.7, 0.7], [-0.7, 0.7], [0, -1]]; for (const d of cands) { let ok = true; for (let k = 0.5; k <= 1.01; k += 0.25) if (obstacleAt(A, sx + d[0] * dist * k, sz + d[1] * dist * k, 0.4)) ok = false; if (ok) { dir = d; break; } } }
   c.x = sx; c.z = sz; c.dir = dir; c.s = s; c.dist = dist;
@@ -37,7 +38,7 @@ C.close = function (silent) {
   const c = GS.care; if (!c) return;
   if (c.bowl) W.scene.remove(c.bowl); if (c.fetch && c.fetch.toy) W.scene.remove(c.fetch.toy);
   const o = o3(); if (o) { o.P.act = null; if (o.held) { o.P.att.face.remove(o.held); o.held = null; } }
-  GS.care = null; W.camOverride = null; $('care').classList.add('hidden'); $('careCursor').classList.add('hidden');
+  GS.care = null; W.camOverride = null; if (W.cur && W.cur.exitSprite) W.cur.exitSprite.visible = true; document.body.classList.remove('incare'); $('care').classList.add('hidden'); $('careCursor').classList.add('hidden');
   G.closePanel(); G.persist(); G.syncLooks();
   if (!silent && G.save().tut === 5) G.toast('Walk to a door to explore! \uD83D\uDEAA');
 };

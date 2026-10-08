@@ -132,7 +132,7 @@ body.kbd #tut { top: calc(64px + var(--st)); }
 .cbtn i { font-style: normal; font-size: 26px; line-height: 1.1; } .cbtn span { font-size: 13px; letter-spacing: .5px; }
 .cbtn.on { background: linear-gradient(180deg,#ff8ae0,#e0359f); }
 .cbtn:active { transform: scale(.94); }
-#careTool { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(186px + var(--sb)); display: flex; gap: 10px; align-items: center; background: rgba(255,247,214,.96); color: #5a3a00; border: 3px solid #f59e0b; border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 15px; width: max-content; max-width: 94vw; }
+#careTool { pointer-events: none; position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(186px + var(--sb)); display: flex; gap: 10px; align-items: center; background: rgba(255,247,214,.96); color: #5a3a00; border: 3px solid #f59e0b; border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 15px; width: max-content; max-width: 94vw; }
 #careCursor { position: fixed; z-index: 13; font-size: 44px; transform: translate(-50%, -60%); pointer-events: none; }
 
 /* mini games */
@@ -207,16 +207,17 @@ body:not(.kbd) #mgSub { top: calc(150px + var(--st)); }
 
 /* landscape phones */
 @media (orientation: landscape) and (max-height: 520px) {
-  #sidebtns { flex-direction: row; top: calc(62px + var(--st)); }
+  #sidebtns { flex-direction: row; top: calc(76px + var(--st)); }
   #roomPill { top: 52px; right: auto; left: 0; position: relative; }
-  #mates { top: calc(136px + var(--st)); }
-  #petChips { top: calc(60px + var(--st)); }
+  #mates { top: calc(150px + var(--st)); }
+  #petChips { top: calc(76px + var(--st)); }
   .pchip2 { min-height: 54px; } .pchip2 img { width: 42px; height: 42px; }
   #bAct { width: 94px; height: 94px; font-size: 18px; } #bCare { width: 72px; height: 72px; right: calc(118px + var(--sr)); }
-  #careMeters { grid-template-columns: repeat(4, 1fr); top: calc(76px + var(--st)); }
+  #careMeters { grid-template-columns: repeat(4, 1fr); top: calc(90px + var(--st)); }
+  #careName { font-size: 19px; min-height: 28px; } #careSub { font-size: 12px; }
   #careBtns { grid-template-columns: repeat(8, 1fr); } .cbtn { min-height: 64px; }
   #careHint { bottom: calc(84px + var(--sb)); } #careTool { bottom: calc(108px + var(--sb)); }
-  #tut.incare { top: calc(118px + var(--st)); }
+  #tut.incare { top: calc(130px + var(--st)); }
   #tut { top: calc(60px + var(--st)); left: 62%; width: min(56vw, 420px); }
   #decorBar { bottom: calc(110px + var(--sb)); }
   #mgSub, body:not(.kbd) #mgSub { top: calc(66px + var(--st)); }
@@ -224,3 +225,10 @@ body:not(.kbd) #mgSub { top: calc(150px + var(--st)); }
   .mgb { min-height: 68px; }
 }
 @media (max-width: 370px) { .pill { font-size: 14px; padding: 0 10px; } #areaPill { display: none; } }
+#careToolDone { pointer-events: auto; }
+@media (orientation: landscape) and (max-height: 520px) {
+  #petChips { flex-direction: row; }
+  .pchip2 { width: auto; padding: 4px; } .pchip2 span { display: none; }
+}
+body.incare #toasts { top: auto; bottom: calc(196px + var(--sb)); }
+@media (orientation: landscape) and (max-height: 520px) { body.incare #toasts { bottom: calc(110px + var(--sb)); } }

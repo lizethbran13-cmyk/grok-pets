@@ -182,7 +182,7 @@ function room(id, w, d, floorTex, wallCol, o) {
   rect(A, -w / 2, w / 2, -d / 2, d / 2 - 0.1);
   const mat = box(2, 0.03, 1, '#16a34a', g, 0, 0.015, d / 2 - 0.55); mat.renderOrder = 1;
   const ex = hot(A, { id: 'exit_' + id, kind: 'exit', x: 0, z: d / 2 - 0.6, reach: 1.4, name: 'to Town', label: 'EXIT' });
-  const es = W.textSprite('\u2B07 EXIT', { size: 36, h: 0.48, bg: 'rgba(22,163,74,.95)' }); es.position.set(0, 1.2, d / 2 - 0.5); g.add(es);
+  const es = W.textSprite('\u2B07 EXIT', { size: 36, h: 0.48, bg: 'rgba(22,163,74,.95)' }); es.position.set(0, 1.2, d / 2 - 0.5); g.add(es); A.exitSprite = es;
   A.spawn = [0, d / 2 - 1.6]; A.w = w; A.d = d;
   return A;
 }

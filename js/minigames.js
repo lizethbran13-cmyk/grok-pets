@@ -77,7 +77,7 @@ GAMES.frisbee = function (R) {
   for (let i = 0; i < 4; i++) { const ln = plane(A, 16, 0.08, '#ffffff', 0, -4 + i * 5.3, 0.02); void ln; }
   [[-10, -6], [10, -2], [-11, 8], [11, 10], [-6, -12], [7, -13]].forEach((q) => MD.tree(A.g, q[0], q[1], 1.2));
   const thrower = MD.person({ shirt: G.prof.color, hair: '#3b2414' }); thrower.g.position.set(0, 0, 15); thrower.g.rotation.y = Math.PI; A.g.add(thrower.g);
-  const g = { x: 0, z: 9, sp: 0, discs: [], next: 1.2, left: 45, catches: 0, combo: 0, best: 0, golden: 0, missed: 0 };
+  const g = { x: 0, z: 9, sp: 0, discs: [], next: 1.2, left: 45, catches: 0, combo: 0, best: 0, golden: 0, missed: 0 }; R.st = g;
   P.g.position.set(0, 0, 9); P.g.rotation.y = Math.PI;
   const catchR = hasF ? 1.5 : 1.2, speed = 7.6;
   sub('Run under the frisbees! ' + (hasF ? '(Your Frisbee toy gives wider catches!)' : '') + (('ontouchstart' in window) ? ' Drag to run, or tap a spot.' : ' WASD / arrows to run.'));
@@ -138,7 +138,7 @@ GAMES.race = function (R) {
     else { const m = new T.Mesh(MD.G.circle, MD.M('#3b82f6', { transparent: true, opacity: 0.75 })); m.rotation.x = -Math.PI / 2; m.scale.set(0.9, 0.7, 1); m.position.set(LANES[lane], 0.04, z); A.g.add(m); obs.push({ t: 'puddle', lane, z, m }); }
     if (rnd() < 0.85) { const tl = Math.floor(rnd() * 3), tz = z - 5; if (!obs.some((o) => o.lane === tl && Math.abs(o.z - tz) < 2)) { const m = MD.item('bone'); m.scale.setScalar(1.4); m.position.set(LANES[tl], 0.4, tz); A.g.add(m); treats.push({ lane: tl, z: tz, m, got: false }); } }
   }
-  const g = { z: 0, lane: 1, x: 0, sp: 0, jumpT: 0, slowT: 0, boostT: 0, time: 0, treats: 0, bumps: 0, finished: false };
+  const g = { z: 0, lane: 1, x: 0, sp: 0, jumpT: 0, slowT: 0, boostT: 0, time: 0, treats: 0, bumps: 0, finished: false }; R.st = g;
   P.g.position.set(0, 0, 0); P.g.rotation.y = Math.PI;
   sub(('ontouchstart' in window) ? 'Swipe or tap \u25C0 \u25B6 to switch lanes, JUMP over hurdles. Grab bones for speed!' : '\u2190 \u2192 switch lanes, SPACE / \u2191 to jump. Grab bones for speed!');
   btns([['left', '\u25C0'], ['jump', 'JUMP', 'big'], ['right', '\u25B6']]);
@@ -187,7 +187,7 @@ GAMES.show = function (R) {
   const style = Math.round(pd.n.f / 100 * 20 + pd.n.c / 100 * 10 + Math.min(12, accStyle * 1.5) + Math.min(8, pd.lv * 0.6));
   const known = GP.TRICKS.filter((t) => (pd.tricks[t.id] || 0) >= GP.TRICK_NEED).map((t) => t.id);
   const calls = []; for (let i = 0; i < 8; i++) { const pool = []; GP.TRICKS.forEach((t) => { const w = known.indexOf(t.id) >= 0 ? 3 : 1; for (let k = 0; k < w; k++) pool.push(t.id); }); calls.push(pool[Math.floor(rnd() * pool.length)]); }
-  const g = { ph: 'walk', t: 0, i: -1, win: 0, wt: 0, pts: 0, perfect: 0, x: -3.5, lastOk: null, style, tricks: 0 };
+  const g = { ph: 'walk', t: 0, i: -1, win: 0, wt: 0, pts: 0, perfect: 0, x: -3.5, lastOk: null, style, tricks: 0 }; R.st = g;
   P.g.position.set(-3.5, 0.5, -1); P.g.rotation.y = Math.PI / 2;
   sub('Strut your stuff! Style: happiness, cleanness, accessories & level.');
   btns([]);
@@ -240,7 +240,7 @@ GAMES.dig = function (R) {
   const LOOT = [['gem', 40, '\uD83D\uDC8E Gem!'], ['gold', 60, '\uD83C\uDF1F Golden Bone!'], ['coins', 25, '\uD83E\uDE99 Coin pile!'], ['coins', 25, '\uD83E\uDE99 Coin pile!'], ['bone', 15, '\uD83E\uDDB4 Bone!'], ['bone', 15, '\uD83E\uDDB4 Bone!'], ['boot', 0, '\uD83D\uDC62 An old boot\u2026'], ['boot', 0, '\uD83E\uDD6B A tin can\u2026']];
   const idx = tiles.map((_, i) => i); for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
   LOOT.forEach((l, i) => { tiles[idx[i] === 24 ? idx[i + 10] : idx[i]].item = l; });
-  const g = { x: 0, z: 0, sp: 0, digs: 10, left: 75, found: 0, digT: 0, warm: '' };
+  const g = { x: 0, z: 0, sp: 0, digs: 10, left: 75, found: 0, digT: 0, warm: '' }; R.st = g;
   P.g.position.set(0, 0, 0);
   sub(('ontouchstart' in window) ? 'Tap a mound to walk there (or drag). Follow the sniff meter, then DIG!' : 'WASD to walk, SPACE to dig. Follow the sniff meter!');
   btns([['dig', '\u26CF\uFE0F DIG', 'big dig']]);
@@ -248,9 +248,11 @@ GAMES.dig = function (R) {
   function sniff() { const c = cur(); let best = 99; tiles.forEach((t) => { if (!t.dug && t.item && t.item[1] > 0) best = Math.min(best, Math.max(Math.abs(t.x - c.x), Math.abs(t.z - c.z))); }); return best; }
   function dig() {
     if (g.digT > 0 || g.digs <= 0) return; const t = cur(); if (t.dug) { msg('Already dug here!', 0.6); return; }
-    g.digT = 0.8; P.play('dig', 0.8); Snd.fx('dig');
-    setTimeout(() => {
-      if (!R || R.id !== 'dig') return; t.dug = true; g.digs--; t.m.scale.y = 0.02; t.m.material = MD.M('#7c5a32');
+    g.digT = 0.8; g.pend = t; P.play('dig', 0.8); Snd.fx('dig');
+  }
+  function resolve(t) {
+    {
+      t.dug = true; g.digs--; t.m.scale.y = 0.02; t.m.material = MD.M('#7c5a32');
       const hole = new T.Mesh(MD.G.circle, MD.M('#5b3a1e')); hole.rotation.x = -Math.PI / 2; hole.scale.setScalar(0.42); hole.position.set(pos(t.x), 0.03, pos(t.z)); A.g.add(hole);
       if (t.item) { const v = Math.round(t.item[1] * mult); R.score += v; if (v) g.found++; msg(t.item[2] + (v ? ' +' + v : ''), 0.9); Snd.fx(v ? 'treasure' : 'junk');
         const it = new T.Group(); if (t.item[0] === 'gem') MD.mesh(MD.G.cone4, MD.M('#22d3ee', { emissive: '#0e7490' }), it, 0, 0.3, 0, 0.25, 0.5, 0.25); else if (t.item[0] === 'coins') { for (let i = 0; i < 4; i++) MD.cyl(0.18, 0.05, MD.M('#facc15', { emissive: '#7a5a00' }), it, 0, 0.05 + i * 0.06, 0); } else if (t.item[0] === 'boot') MD.box(0.3, 0.35, 0.5, '#57534e', it, 0, 0.18, 0); else { const b = MD.item('bone'); if (t.item[0] === 'gold') b.traverse((q) => { if (q.isMesh) q.material = MD.M('#facc15', { emissive: '#7a5a00' }); }); b.scale.setScalar(1.6); it.add(b); }
@@ -259,11 +261,12 @@ GAMES.dig = function (R) {
       R.prog = 1 - g.digs / 10;
       const left = tiles.filter((q) => !q.dug && q.item && q.item[1] > 0).length;
       if (g.digs <= 0 || !left) finish(this_.result());
-    }, 800);
+    }
   }
   const this_ = {
     update(dt) {
-      g.left -= dt; g.digT -= dt; if (g.left <= 0) { finish(this_.result()); return; }
+      g.left -= dt; g.digT -= dt; if (g.pend && g.digT <= 0) { const t = g.pend; g.pend = null; resolve(t); if (R.phase !== 'play') return; }
+      if (g.left <= 0) { finish(this_.result()); return; }
       const mi = moveInput(); if (mi.m > 0.05) R.tap = null; else if (R.tap) { const dx = R.tap.x - g.x, dz = R.tap.z - g.z, d = Math.hypot(dx, dz); if (d < 0.08) { R.tap = null; } else { mi.x = dx / d; mi.z = dz / d; mi.m = Math.min(1, d * 2.5); } }
       if (g.digT > 0) mi.m = 0;
       g.sp = 4.5 * mi.m; const lim = pos(N - 1) + 0.3; g.x = clamp(g.x + mi.x * g.sp * dt, -lim, lim); g.z = clamp(g.z + mi.z * g.sp * dt, -lim, lim);
@@ -284,5 +287,5 @@ GAMES.dig = function (R) {
   };
   return this_;
 };
-MG.debug = () => R && { id: R.id, phase: R.phase, score: R.score, prog: R.prog, g: R.g };
+MG.debug = () => R && { id: R.id, phase: R.phase, score: R.score, prog: R.prog, g: R.g, st: R.st, R };
 })();
