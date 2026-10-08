@@ -161,8 +161,19 @@ function buildTown() {
   const bdg = grp(g, 70, 0, -6); box(1.6, 1.2, 0.2, '#fbbf24', bdg, 0, 0.6, 0); const bds = signPlane('DIG HERE!', 2.2, 0.6, '#ea580c'); bds.position.set(0, 1.5, 0.12); bdg.add(bds); obsB(A, 69.2, 70.8, -6.2, -5.8);
   // world border trees
   for (let a = 0; a < 40; a++) { const x = -40 + (a * 9.3) % 130, z = a % 2 ? -52 - (a % 5) : 32 + (a % 4); MD.tree(g, x, z, 1.3, a % 3 ? '#16a34a' : '#15803d'); }
+  // Old Man Grumbleton's fenced yard (west of the plaza): little house, porch bench, KEEP OUT signs
+  ground(A, 11.6, 8.6, '#74c765', -20.3, 9.4, 0.03); ground(A, 2.1, 2.2, '#e7d7b5', -14.05, 9.8, 0.04);
+  rect(A, -25.8, -14.6, 5.4, 13.4); rect(A, -15.4, -12.5, 8.7, 10.9); W.grumpYard = [-25.8, -14.6, 5.4, 13.4];
+  const gh = grp(g, -22, 0, 7.15); box(4.4, 3, 3.4, '#a8a29e', gh, 0, 1.5, 0); const gr = mesh(G.cone4, '#57534e', gh, 0, 3.75, 0, 3.6, 1.5, 2.8); gr.rotation.y = Math.PI / 4;
+  box(1, 1.9, 0.1, '#5b3a1e', gh, 1, 0.95, 1.72); box(1, 0.8, 0.1, '#bae6fd', gh, -1.1, 1.8, 1.72); box(1.15, 0.12, 0.14, '#78716c', gh, -1.1, 1.36, 1.75);
+  obsB(A, -24.2, -19.8, 5.4, 8.9);
+  MD.bench(g, -18.6, 9.4, 0);
+  const fc = '#8b5a2b';
+  MD.fence(g, -26, 5.2, -26, 13.6, fc); MD.fence(g, -26, 5.2, -14.8, 5.2, fc); MD.fence(g, -26, 13.6, -14.8, 13.6, fc); MD.fence(g, -14.8, 5.2, -14.8, 8.6, fc); MD.fence(g, -14.8, 11, -14.8, 13.6, fc);
+  const ko = signPlane('KEEP OUT!', 2, 0.55, '#dc2626'); ko.position.set(-17.5, 1.25, 13.66); g.add(ko);
+  const bw = signPlane('BEWARE OF BRUTUS', 2.4, 0.5, '#ea580c'); bw.position.set(-14.72, 1.3, 12.3); bw.rotation.y = Math.PI / 2; g.add(bw);
   // ambient townsfolk walking their pets: see npc.js
-  A.label = 'Town'; A.zone = function (x, z) { return z < -19 ? 'Your Yard' : x > 56.5 ? 'Beach' : x > 19.5 ? 'Pet Park' : 'Town Plaza'; };
+  A.label = 'Town'; A.zone = function (x, z) { return x < -14.5 && z > 5 && z < 14 ? 'Grumbleton\u2019s Yard' : z < -19 ? 'Your Yard' : x > 56.5 ? 'Beach' : x > 19.5 ? 'Pet Park' : 'Town Plaza'; };
 }
 
 /* ---------------- interiors ---------------- */

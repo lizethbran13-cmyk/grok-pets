@@ -1,4 +1,4 @@
-/* Grok Pets - 3D models: pets (17 species), accessories, people, furniture, props */
+/* Grok Pets - 3D models: pets (18 species), accessories, people, furniture, props */
 (function () {
 'use strict';
 const GP = window.GP, T = window.THREE, TAU = Math.PI * 2;
@@ -85,6 +85,10 @@ function quad(P, o) {
   if (o.beard) { ell(hr * 0.5, hr * 0.5, hr * 0.42, c2, head, 0, -hr * 0.62, hr * 0.85); [-1, 1].forEach((s) => { const b = box(hr * 0.5, hr * 0.14, hr * 0.2, c2, head, s * hr * 0.32, hr * 0.38, hr * 0.78); b.rotation.z = s * -0.3; }); }
   if (o.robot) { P.eyes = []; [-1, 1].forEach((s) => { const e = grp(head, s * hr * 0.42, hr * 0.12, hr * 0.9); box(hr * 0.4, hr * 0.26, 0.04, M(c2, { emissive: c2 }), e, 0, 0, 0); P.eyes.push({ g: e }); }); }
   else P.eyes = eyes(head, hr * (o.eyeR || 0.2), hr * 0.42, hr * 0.15, hr * 0.78, o.eye, o.oneEye);
+  if (o.jowls) { // bulldog: droopy jowls, little underbite teeth, wrinkly brow
+    [-1, 1].forEach((s) => { ell(hr * 0.32, hr * 0.36, hr * 0.3, c2, head, s * hr * 0.3, -hr * 0.44, hr * 0.7); cone(hr * 0.06, hr * 0.15, '#ffffff', head, s * hr * 0.18, -hr * 0.4, hr * 1.0); });
+    box(hr * 0.8, hr * 0.07, hr * 0.12, shade(c1, -0.25), head, 0, hr * 0.42, hr * 0.78);
+  }
   if (o.cheeks) [-1, 1].forEach((s) => ell(hr * 0.35, hr * 0.3, hr * 0.3, o.cheekCol || c2, head, s * hr * 0.62, -hr * 0.3, hr * 0.4));
   // ears
   const ec = o.points ? c2 : (o.earCol || c1);
@@ -245,6 +249,7 @@ MD.acc = function (id, P) {
     case 'bandana': { const r = mesh(G.torus, '#ef4444', g, 0, 0, 0, nr, nr, nr * 0.9); r.rotation.x = Math.PI / 2; const t = mesh(G.cone4, '#ef4444', g, 0, -nr * 0.35, nr * 0.85, nr * 0.6, nr * 0.6, nr * 0.15); t.rotation.z = Math.PI; for (let i = 0; i < 3; i++) sph(nr * 0.06, '#fff', g, (i - 1) * nr * 0.22, -nr * 0.25, nr * 0.98); break; }
     case 'bowtie': { [-1, 1].forEach((d) => { const c = cone(nr * 0.3, nr * 0.5, '#7c3aed', g, d * nr * 0.25, -nr * 0.1, nr * 0.95); c.rotation.z = d * Math.PI / 2; }); sph(nr * 0.13, '#5b21b6', g, 0, -nr * 0.1, nr * 1.0); break; }
     case 'scarf': { const r = mesh(G.torus, '#0ea5e9', g, 0, 0, 0, nr * 1.02, nr * 1.02, nr * 1.4); r.rotation.x = Math.PI / 2; box(nr * 0.35, nr * 0.9, nr * 0.12, '#0ea5e9', g, nr * 0.4, -nr * 0.5, nr * 0.9); box(nr * 0.36, nr * 0.08, nr * 0.13, '#f8fafc', g, nr * 0.4, -nr * 0.75, nr * 0.9); break; }
+    case 'grumpycap': { ell(0.19, 0.07, 0.2, '#6b5b4b', s, 0, 0.035, 0); box(0.27, 0.025, 0.13, '#57483a', s, 0, 0.015, 0.17); sph(0.022, '#3f3328', s, 0, 0.1, 0); box(0.3, 0.012, 0.012, '#a8956f', s, 0, 0.05, 0.12); break; }
     case 'sunglasses': { [-1, 1].forEach((d) => box(0.13, 0.08, 0.02, '#111827', s, d * 0.09, 0, 0.03)); box(0.06, 0.02, 0.02, '#111827', s, 0, 0.02, 0.03); break; }
     case 'heartglasses': { [-1, 1].forEach((d) => { const h = grp(s, d * 0.09, 0, 0.03); sph(0.04, '#ec4899', h, -0.025, 0.015, 0).scale.z = 0.3; sph(0.04, '#ec4899', h, 0.025, 0.015, 0).scale.z = 0.3; const c = cone(0.058, 0.07, '#ec4899', h, 0, -0.035, 0); c.rotation.z = Math.PI; c.scale.z = 0.012; }); box(0.05, 0.015, 0.015, '#db2777', s, 0, 0.02, 0.03); break; }
     default: return null;
@@ -312,13 +317,24 @@ MD.person = function (o) {
   const head = grp(g, 0, 1.42, 0);
   ell(0.3, 0.32, 0.3, skin, head, 0, 0, 0);
   [-1, 1].forEach((s) => { sph(0.045, '#1b1420', head, s * 0.1, 0.02, 0.27); });
-  box(0.1, 0.025, 0.02, '#a8483a', head, 0, -0.11, 0.29);
+  let frownG = null, smileG = null, brows = [];
+  if (o.frown) { // grumpy face: frown (with a hidden smile for later), angry brows, bushy mustache
+    frownG = grp(head, 0, -0.115, 0.29); smileG = grp(head, 0, -0.115, 0.29); smileG.visible = false;
+    [-1, 1].forEach((s) => { const f = box(0.075, 0.022, 0.02, '#7a2e24', frownG, s * 0.032, 0, 0); f.rotation.z = -s * 0.4; const m = box(0.075, 0.022, 0.02, '#a8483a', smileG, s * 0.032, 0.005, 0); m.rotation.z = s * 0.4; });
+    [-1, 1].forEach((s) => { const b = box(0.12, 0.035, 0.03, o.brows || hair, head, s * 0.1, 0.105, 0.28); b.rotation.z = s * 0.38; brows.push(b); });
+  } else box(0.1, 0.025, 0.02, '#a8483a', head, 0, -0.11, 0.29);
+  if (o.mustache) { [-1, 1].forEach((s) => { const m = ell(0.07, 0.03, 0.03, o.mustache, head, s * 0.05, -0.07, 0.295); m.rotation.z = s * 0.25; }); }
   ell(0.315, 0.29, 0.31, hair, head, 0, 0.08, -0.03);
   if (o.long) box(0.56, 0.5, 0.18, hair, head, 0, -0.2, -0.17);
   if (o.cap) { cyl(0.32, 0.14, o.cap, head, 0, 0.24, 0); box(0.34, 0.04, 0.2, o.cap, head, 0, 0.18, 0.3); }
+  if (o.flatcap) { ell(0.33, 0.12, 0.35, o.flatcap, head, 0, 0.23, 0.01); box(0.36, 0.04, 0.17, o.flatcap, head, 0, 0.18, 0.31); }
   if (o.apron) box(0.44, 0.5, 0.02, o.apron, body, 0, 0.78, 0.16);
   const sh = new T.Mesh(G.circle, shadowMat()); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.012; sh.scale.setScalar(0.42); g.add(sh);
+  if (o.cane) { // walking cane in the right hand (it gets shaken when he "waves")
+    cyl(0.025, 0.66, '#5b3a1e', arms[1], 0, -0.82, 0.07); const crook = mesh(G.torus, '#5b3a1e', arms[1], 0.05, -0.5, 0.07, 0.05, 0.05, 0.05); crook.rotation.y = Math.PI / 2;
+  }
   const ch = { g, body, head, legs, arms, ph: Math.random() * 6, h: 1.8 };
+  ch.setSmile = function (on) { if (!frownG) return; frownG.visible = !on; smileG.visible = !!on; brows.forEach((b, i) => { b.rotation.z = on ? (i ? -0.12 : 0.12) : (i ? 0.38 : -0.38); }); };
   ch.anim = function (dt, sp, wave) {
     // stride speed and size follow the real walking speed (no foot sliding when strolling slowly)
     ch.ph += dt * (sp > 0.1 ? Math.min(10, 2.5 + sp * 4) : 2);

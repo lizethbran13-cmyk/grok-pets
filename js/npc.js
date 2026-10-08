@@ -38,7 +38,7 @@ const DEFS = [
     greet: ['Hi there! I\u2019m Rosa, and this is Goldie! We walk around the fountain every day.', 'Oh hello! Goldie spotted you from all the way across the plaza!'],
     greetF: ['Hey, it\u2019s you again! Goldie\u2019s tail is going crazy!', 'There\u2019s my favourite neighbour! Lovely day for a walk, right?'],
     greetB: ['My best friend! Goldie saved you the sunniest spot by the fountain.', 'You and {pet} make my whole day, you know that?'],
-    tips: ['Goldie goes wild for Meaty Treats. Most dogs do!', 'If your pet looks sad, a game of fetch fixes almost everything.'] },
+    tips: ['Goldie goes wild for Meaty Treats. Most dogs do!', 'Don\u2019t mind Old Man Grumbleton. He yells, Brutus barks, nobody ever gets hurt. I think they\u2019re just lonely.', 'If your pet looks sad, a game of fetch fixes almost everything.'] },
   { id: 'marcus', name: 'Marcus', role: 'Sporty dog walker', area: 'town', emo: '\uD83E\uDDD1', col: '#a3e635', model: { shirt: '#a3e635', hair: '#111827' },
     pet: { sp: 'corgi', name: 'Pudding', col: ['#e08a3a', '#ffffff'], acc: { neck: 'redcollar' } }, speed: 1.5, loop: false, start: 3,
     route: [[8.5, -3.5], [12.8, 0], [19, 0], [25, 1], [31, -5, 3], [38, 0], [46, 3, 2.5], [49, -7], [40, -9]],
@@ -54,7 +54,7 @@ const DEFS = [
     greet: ['Well hello, young one. I\u2019m Joe, and this slowpoke is Shelly. We\u2019re in no hurry.', 'Ah, a new face at the park! Shelly says hello. Slowly.'],
     greetF: ['Good to see you again. Shelly perked right up when she saw you.', 'Back for more stories, eh? Pull up a bench.'],
     greetB: ['My dear friend! Shelly and I were just talking about you. Well, I was talking.', 'You remind me of me when I was young, and {pet} reminds me of Shelly!'],
-    tips: ['Tortoises love Veggie Bowls. Shelly has had one every day for 40 years!', 'Patience is the best trick of all. Took Shelly three years to learn Sit.'] },
+    tips: ['Tortoises love Veggie Bowls. Shelly has had one every day for 40 years!', 'Patience is the best trick of all. Took Shelly three years to learn Sit.', 'Old Man Grumbleton? Grumpy as a rain cloud. But I once saw his Brutus wag his whole bottom at a Meaty Treat\u2026'] },
   { id: 'kiki', name: 'Coach Kiki', role: 'Mini game host', area: 'town', staff: true, emo: '\uD83E\uDDE2', col: '#facc15', menu: '\uD83C\uDFAE PLAY GAMES',
     persona: 'Super energetic. Runs the mini games at the Pet Park all day.', gift: 'frisbee', quest: 'show',
     greet: ['Hey hey! Coach Kiki here! Ready to play some mini games?', 'Step right up! Frisbee, racing, the Pet Show or treasure digging!'],
@@ -91,6 +91,28 @@ const DEFS = [
     busy: 'Oh, these little ones need me right now! Maybe another time, dear.',
     tips: ['The pens change every day, so come back to meet new friends!', 'Your family pets join you for free when you reach their goals. Check the Family Corner!'] }
 ];
+// Old Man Grumbleton: grumpy-funny neighbour with Brutus the bulldog. Friendship only grows with treats for Brutus (secret).
+DEFS.push({ id: 'grumble', name: 'Old Man Grumbleton', role: 'Grumpy neighbour', area: 'town', grumpy: true, emo: '\uD83D\uDC74', col: '#78716c',
+  model: { shirt: '#78716c', hair: '#f1f5f9', pants: '#57534e', flatcap: '#4b5563', frown: 1, brows: '#f1f5f9', mustache: '#f1f5f9', cane: 1 },
+  pet: { sp: 'bulldog', name: 'Brutus', col: ['#d6a66a', '#fff4e6'], acc: { neck: 'redcollar' } }, speed: 0.6, loop: true, start: 0, petCap: 2.6, noLeash: true, petFront: true,
+  route: [[-18.6, 9.45, 10, 'sit'], [-16.2, 12.3], [-21.5, 12.6, 3], [-25, 11.5], [-25, 9.7], [-21.5, 10.2]],
+  persona: 'Grumpy, loud and secretly lonely. Thinks Brutus is the greatest guard dog alive (Brutus is scared of squirrels).', gift: 'grumpycap' });
+const GRUMP = {
+  greet: [['What do YOU want?'], ['Get off my lawn!'], ['Brutus, sic \u2019em!', 1], ['Hmph. Another one. Don\u2019t touch my roses.'], ['I was napping. NAPPING!'], ['Do I look like I want company? DO I?'],
+    ['Back in my day, nobody bothered anybody!'], ['Brutus! Show this nosy kid the gate!', 1], ['Shoo! Scram! Skedaddle!'], ['If you\u2019re selling cookies, I\u2019m not buying. Unless they\u2019re oatmeal. NO! Not buying!']],
+  dog: [['Nice? NICE?! Brutus is a trained guard dog! \u2026He\u2019s scared of squirrels, but still!'], ['Brutus only likes two things: Meaty Treats and squeaky bones. NOT YOU.'], ['Don\u2019t pet him! He drools. VIOLENTLY.'],
+    ['Brutus! Show this kid what you think of \u201cnice\u201d!', 1], ['He\u2019s not nice. He\u2019s PERFECT. There\u2019s a difference.']],
+  pd: ['Brutus doesn\u2019t do PLAYDATES.', 'A playdate? HA! Brutus only plays with his own shadow. And he\u2019s winning.', 'PLAYDATE?! Get off my lawn!', 'The only date Brutus has is with his nap. Scram!'],
+  tier: ['Not welcome', 'Tolerated', 'Hmph', 'Almost liked', 'Secretly fond', 'Grumpy best friend'],
+  up: ['', '\u2026Hmph. Brutus didn\u2019t hate that. Doesn\u2019t mean I like you.', 'You again? Brutus wagged. WAGGED. Don\u2019t let it go to your head.', 'Fine. FINE. You can stand on my lawn. Just the edge.', 'I suppose you\u2019re\u2026 not the worst kid in town. Don\u2019t tell anyone I said that.'],
+  best: ['Oh, it\u2019s you. \u2026Good to see you, kid. Don\u2019t tell anyone.', 'Brutus! Your buddy\u2019s here! \u2026What? I\u2019m not smiling. It\u2019s gas.', 'Get off my lawn! \u2026Kidding. Heh. Sit down, sit down.'],
+  bestDog: ['He IS a nice dog. The nicest. Don\u2019t tell the mailman.', 'Brutus thinks your pet is the coolest. So do I. A little.']
+};
+const GRUMP_MAX = 15, TREAT_CD = 3600 * 1000;
+function pickNR(n, key, list) { // random pick that never repeats the previous one
+  let i = Math.floor(Math.random() * list.length); if (list.length > 1 && i === n['last_' + key]) i = (i + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
+  n['last_' + key] = i; return list[i];
+}
 const GIFT_N = { cupcake: 2, steak: 2 };
 const QUESTS = {
   happy: { ask: 'Could you show me a really happy pet? Get {pet} to Overjoyed (super happy) and come say hi!', short: 'Bring me an Overjoyed pet',
@@ -145,13 +167,16 @@ NPC.init = function () {
       const nx = d.route[n.wi]; n.yaw = yawOf(nx[0] - n.x, nx[1] - n.z);
       const P = MD.pet({ sp: d.pet.sp, col: d.pet.col, lv: 7, acc: d.pet.acc }); A.g.add(P.g);
       n.pet = { P, x: n.x - Math.sin(n.yaw) * 1, z: n.z - Math.cos(n.yaw) * 1, yaw: n.yaw, sp: 0, spd: 0, idle: 2 };
-      const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.Float32BufferAttribute(new Float32Array(6), 3));
-      n.leash = new T.Line(geo, new T.LineBasicMaterial({ color: '#7c2d12' })); n.leash.frustumCulled = false; A.g.add(n.leash);
+      if (!d.noLeash) { const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.Float32BufferAttribute(new Float32Array(6), 3));
+        n.leash = new T.Line(geo, new T.LineBasicMaterial({ color: '#7c2d12' })); n.leash.frustumCulled = false; A.g.add(n.leash); }
+      if (p0[3] === 'sit') { n.yaw = 0; n.wait = 4; n.sitting = true; n.sitK = 1; n.pet.yaw = 0; }
+      n.lastCharge = -1e9;
     }
     n.ch.g.position.set(n.x, 0, n.z); n.ch.g.rotation.y = n.yaw;
     bubble(n); NPC.list.push(n);
   });
   NPC.byId = (id) => NPC.list.find((n) => n.def.id === id);
+  const gb = NPC.byId('grumble'); if (gb && st('grumble').fr >= GRUMP_MAX) gb.ch.setSmile(true);
 };
 
 /* ---------------- movement ---------------- */
@@ -186,18 +211,20 @@ function tickWalker(n, dt, A) {
   const me = GS.me, nearMe = G.inGame() && me.area === n.area ? Math.hypot(me.x - n.x, me.z - n.z) : 99;
   const targeted = GS.goal && GS.goal.npc === n;
   if (n.talk || n.pd || targeted) {
-    advance(n, A, 0, dt, 0.35);
+    n.sitting = false; advance(n, A, 0, dt, 0.35);
     if (n.pd && GS.npcPd) turn(n, yawOf(GS.npcPd.mx - n.x, GS.npcPd.mz - n.z), dt, 6);
     else if (nearMe < 8) turn(n, yawOf(me.x - n.x, me.z - n.z), dt, 6);
   } else if (n.wait > 0) {
     n.wait -= dt; advance(n, A, 0, dt, 0.35);
-    if (nearMe < 3.2) turn(n, yawOf(me.x - n.x, me.z - n.z), dt, 4); // glance at the player
+    if (n.wait <= 0) n.sitting = false;
+    if (n.sitting) turn(n, 0, dt, 3); // sit on the porch bench facing the street
+    else if (nearMe < 3.2) turn(n, yawOf(me.x - n.x, me.z - n.z), dt, 4); // glance at the player
     else if (n.lookYaw != null) turn(n, n.lookYaw + Math.sin(W.time * 0.6 + n.i) * 0.5, dt, 2);
   } else {
     const wp = (n.detour && n.detour[0]) || n.def.route[n.wi], dx = wp[0] - n.x, dz = wp[1] - n.z, d = Math.hypot(dx, dz);
     if (d < (n.detour ? 0.5 : 0.6)) {
       if (n.detour) { n.detour.shift(); if (!n.detour.length) n.detour = null; }
-      else { const pz = wp[2]; if (pz) n.wait = pz * (0.7 + Math.random() * 0.6); else if (Math.random() < 0.15) n.wait = 1 + Math.random() * 1.5; n.lookYaw = n.yaw; nextWp(n); }
+      else { const pz = wp[2]; if (pz) n.wait = pz * (0.7 + Math.random() * 0.6); else if (Math.random() < 0.15) n.wait = 1 + Math.random() * 1.5; n.lookYaw = n.yaw; n.sitting = wp[3] === 'sit'; nextWp(n); }
       n.stuckT = 0;
     } else {
       const want0 = yawOf(dx, dz); turn(n, want0, dt, 5);
@@ -229,13 +256,18 @@ function tickWalker(n, dt, A) {
   n.ch.g.position.set(n.x, 0.05, n.z); n.ch.g.rotation.y = n.yaw;
   if (n.wave > 0) n.wave -= dt;
   n.ch.anim(dt, n.sp, n.wave > 0);
+  if (n.sitK != null) { // seated pose blends in once he faces the street
+    const want = n.sitting && Math.abs(ang(n.yaw)) < 0.35 ? 1 : 0; n.sitK += (want - n.sitK) * Math.min(1, dt * 5);
+    if (n.sitK > 0.01) { n.ch.legs.forEach((l) => { l.rotation.x += (-1.45 - l.rotation.x) * n.sitK; }); n.ch.g.position.y = 0.05 - 0.17 * n.sitK; }
+  }
   tickPet(n, dt, A);
 }
 function tickPet(n, dt, A) {
   const o = n.pet; if (!o) return;
   if (n.pd && GS.npcPd) pdMove(o, 1, dt, A);
+  else if (o.charge) chargeStep(n, o, dt, A);
   else {
-    const fx = Math.sin(n.yaw), fz = Math.cos(n.yaw), side = 0.55, tx = n.x - fx * 0.95 + fz * side, tz = n.z - fz * 0.95 - fx * side;
+    const fx = Math.sin(n.yaw), fz = Math.cos(n.yaw), side = 0.55, back = n.def.petFront ? -0.95 : 0.95, tx = n.x - fx * back + fz * side, tz = n.z - fz * back - fx * side;
     const d = Math.hypot(tx - o.x, tz - o.z);
     if (d > 6) { const f = W.freeNear(A, tx, tz, 0.25); o.x = f[0]; o.z = f[1]; o.spd = 0; o.sp = 0; }
     if (d > 0.3) steer(o, A, tx, tz, dt, n.def.petCap || 3.8, 0.2, 9);
@@ -271,9 +303,10 @@ NPC.tick = function (dt) {
   NPC.list.forEach((n) => {
     if (n.area !== A.id) return;
     if (n.def.staff) tickStaff(n, dt); else tickWalker(n, dt, A);
-    n.bub.visible = free && Math.hypot(GS.me.x - n.x, GS.me.z - n.z) <= n.reach;
+    n.bub.visible = free && GS.promptNpc !== n && Math.hypot(GS.me.x - n.x, GS.me.z - n.z) <= n.reach; // the TALK prompt replaces the bubble for the main target
   });
   if (GS.npcPd) pdTick(dt);
+  grumpTick(dt, A);
 };
 NPC.nearest = function (x, z) {
   let best = null, bd = 1e9; if (!W.cur) return null;
@@ -298,7 +331,7 @@ function picHtml(n) {
 function render(n, text, choices) {
   const d = n.def, h = hearts(d.id), box = $('talkBox');
   box.style.setProperty('--c', d.col);
-  $('talkHead').innerHTML = picHtml(n) + '<div id="talkWho"><b>' + esc(d.name) + '</b><small>' + esc(d.role) + '</small><span class="hearts" title="Friendship">' + '\u2665'.repeat(h) + '<i>' + '\u2665'.repeat(5 - h) + '</i> ' + TIER[h] + '</span></div>' +
+  $('talkHead').innerHTML = picHtml(n) + '<div id="talkWho"><b>' + esc(d.name) + '</b><small>' + esc(d.role) + '</small><span class="hearts" title="Friendship">' + '\u2665'.repeat(h) + '<i>' + '\u2665'.repeat(5 - h) + '</i> ' + (d.grumpy ? GRUMP.tier : TIER)[h] + '</span></div>' +
     (d.pet ? '<img id="talkPet" src="' + G.portrait({ sp: d.pet.sp, col: d.pet.col, lv: 7, acc: d.pet.acc }) + '" alt="" title="' + esc(d.pet.name) + '">' : '') +
     '<button id="talkX" type="button" aria-label="Close">\u2715</button>';
   $('talkText').textContent = text;
@@ -308,6 +341,7 @@ function render(n, text, choices) {
 }
 function menu(n) {
   const d = n.def, out = [];
+  if (d.grumpy) return grumpMenu(n);
   if (d.staff) out.push({ t: d.menu, a: browse, cls: 'primary' });
   out.push({ t: '\uD83D\uDCA1 ANY TIPS?', a: tips, cls: 'blue' });
   if (d.quest) { const q = st(d.id).q; if (!q || q.day !== today()) out.push({ t: '\uD83D\uDCCB ANY JOBS?', a: quest, cls: 'green' }); else if (!q.done) out.push({ t: '\uD83D\uDCCB MY JOB', a: quest, cls: 'green' }); }
@@ -318,6 +352,7 @@ function menu(n) {
 function say(n, text) { render(n, text, menu(n)); }
 function greeting(n) {
   const d = n.def, h = hearts(d.id), c = ctx(), s = st(d.id);
+  if (d.grumpy) return grumpGreet(n);
   const pool = h >= 3 ? d.greetB : h >= 1 ? d.greetF : d.greet; let t = fill(pool[n.gi++ % pool.length], c);
   if (d.id === 'pawla' && c.p) t += ' ' + petComment(c);
   else if (Math.random() < 0.65 || !c.p) t += ' ' + fill(petComment(c), c);
@@ -369,7 +404,8 @@ NPC.talk = function (n) {
   if (typeof n === 'string') n = NPC.byId(n); if (!n) return false;
   GS.goal = null; GS.joyReset && GS.joyReset(); GS.me.sp = 0;
   n.talk = true; n.wave = 1.2; GS.talk = { n, t0: performance.now() };
-  const s = st(n.def.id), t0 = today(); if (s.day !== t0) { s.day = t0; s.fr += 1; }
+  const s = st(n.def.id), t0 = today(); if (s.day !== t0) { s.day = t0; if (!n.def.grumpy) s.fr += 1; } // chatting never softens Grumbleton
+  n.sitting = false;
   say(n, greeting(n)); G.persist();
   $('talk').classList.remove('hidden'); Snd.fx('join');
   return true;
@@ -440,5 +476,81 @@ function finishPd() {
   G.toast('\uD83D\uDC9E Great playdate! ' + (p ? p.name + ' +18 happiness, +10 XP' : '') + ' \u00b7 ' + d.name + ' \u2665');
 }
 NPC.abort = function () { if (GS.talk) NPC.close(); if (GS.npcPd) cleanupPd(); };
+/* ---------------- Old Man Grumbleton ---------------- */
+const isBest = () => st('grumble').fr >= GRUMP_MAX;
+function grumpGreet(n) {
+  if (isBest()) return pickNR(n, 'best', GRUMP.best);
+  const l = pickNR(n, 'greet', GRUMP.greet); if (l[1]) setTimeout(() => startCharge(n), 350); else { n.wave = 1.2; Snd.fx('no'); }
+  return l[0];
+}
+function treatItem() { const inv = sv().inv; return inv.steak > 0 ? 'steak' : inv.bone > 0 ? 'bone' : null; }
+function grumpMenu(n) {
+  const out = [{ t: '\uD83D\uDC36 NICE DOG?', cls: 'blue', a: () => {
+    if (isBest()) { say(n, pickNR(n, 'bdog', GRUMP.bestDog)); n.pet.P.play('happy', 1); return; }
+    const l = pickNR(n, 'dog', GRUMP.dog); say(n, l[0]); if (l[1]) setTimeout(() => startCharge(n), 300); else { n.pet.P.play('nope', 0.8); Snd.fx('growl'); pop('GRRR\u2026', n.pet, '#b45309'); }
+  } }];
+  out.push({ t: '\uD83D\uDC9E PLAYDATE!', cls: 'primary', a: () => { if (isBest()) playdate(n); else { say(n, pickNR(n, 'pd', GRUMP.pd)); n.wave = 1.2; Snd.fx('no'); } } });
+  const ti = treatItem(); if (ti) out.push({ t: GP.ITEMS[ti].icon + ' TREAT FOR BRUTUS', cls: 'green', a: () => giveTreat(n) });
+  out.push({ t: '\uD83C\uDFC3 OKAY OKAY, BYE!', cls: 'alt', a: () => NPC.close() });
+  return out;
+}
+function giveTreat(n) {
+  const s = st('grumble'), ti = treatItem(), inv = sv().inv; if (!ti) { say(n, 'Empty pockets? Typical.'); return; }
+  if (isBest()) { say(n, 'You\u2019ll spoil him rotten! \u2026Okay, one more.'); inv[ti]--; if (inv[ti] <= 0) delete inv[ti]; n.pet.P.play('happy', 1.5); G.persist(); return; }
+  if (Date.now() - (s.tr || 0) < TREAT_CD) { say(n, 'Brutus already had a treat! You trying to make him round? Come back later.'); return; }
+  inv[ti]--; if (inv[ti] <= 0) delete inv[ti];
+  s.tr = Date.now(); s.fr = Math.min(GRUMP_MAX, s.fr + 3);
+  const o = n.pet; o.charge = null; o.P.play(ti === 'steak' ? 'eat' : 'happy', 1.4); W.fx('heart', o.x, o.P.hTop + 0.2, o.z, 3, 0.4); Snd.fx(ti === 'steak' ? 'eat' : 'squeak'); G.persist();
+  if (s.fr >= GRUMP_MAX) {
+    n.ch.setSmile(true); n.wave = 0; s.gift = 1; inv.grumpycap = 1; G.persist();
+    Snd.fx('learn'); G.toast('\uD83C\uDF81 Old Man Grumbleton gave you his \uD83D\uDE24 Grumpy Cap! (rare)');
+    render(n, 'Heh\u2026 heh heh. Alright, kid. You win. Here, take my lucky Grumpy Cap. Brutus, go play!', [{ t: '\uD83C\uDF89 YAY! GO PLAY!', cls: 'primary', a: () => {
+      const c = ctx(); NPC.close(true); if (c.p && GS.p3[c.p.id]) { s.pd = Date.now(); startPd(n, c.p); } else { n.talk = false; }
+    } }]);
+    return;
+  }
+  say(n, GRUMP.up[hearts('grumble')] || GRUMP.up[1]);
+}
+// cartoon "charge": growl, run at the player, skid to a stop a little way off, snort. The player hops back. No damage, no coin loss.
+function startCharge(n) {
+  const o = n.pet; if (!o || o.charge || n.pd || isBest() || GS.care || GS.mg || W.cur.id !== n.area || GS.me.area !== n.area) return false;
+  o.charge = { ph: 'growl', t: 0, tt: 0, minD: 99 }; n.lastCharge = performance.now(); n.wave = 1.4; o.P.act = null;
+  Snd.fx('growl'); pop('GRRR!', o, '#b45309'); return true;
+}
+function chargeStep(n, o, dt, A) {
+  const c = o.charge, me = GS.me, dx = me.x - o.x, dz = me.z - o.z, d = Math.hypot(dx, dz); c.t += dt; c.tt += dt; c.minD = Math.min(c.minD, d);
+  if (c.tt > 5 || GS.mg || GS.care || W.cur.id !== n.area) { o.charge = null; return; } // never get stuck
+  if (c.ph === 'growl') { advance(o, A, 0, dt, 0.2); turn(o, yawOf(dx, dz), dt, 10); if (!o.P.act) o.P.play('nope', 0.5); if (c.t > 0.55) { c.ph = 'run'; c.t = 0; Snd.fx('bark'); pop('WOOF! WOOF!', o, '#dc2626'); } }
+  else if (c.ph === 'run') {
+    turn(o, yawOf(dx, dz), dt, 12);
+    const fx = Math.sin(o.yaw), fz = Math.cos(o.yaw), ahead = o.x + fx * 0.4;
+    if (d <= 1.7 || c.t > 2.2 || ahead > -14.9) { c.ph = 'skid'; c.t = 0; c.v = Math.max(o.spd, 1); Snd.fx('bump'); if (d < 4) nudge(o); }
+    else advance(o, A, 5.5 * Math.max(0, Math.cos(ang(yawOf(dx, dz) - o.yaw))), dt, 0.2);
+  } else if (c.ph === 'skid') {
+    c.v = Math.max(0, c.v - 14 * dt); o.spd = c.v;
+    if (c.v > 0.02) { const fx = Math.sin(o.yaw), fz = Math.cos(o.yaw); const r = W.move(A, o.x, o.z, fx * c.v * dt, fz * c.v * dt, 0.2); if (r[0] > -14.9) { c.v = 0; } else { o.sp = Math.hypot(r[0] - o.x, r[1] - o.z) / Math.max(dt, 1e-3); o.x = r[0]; o.z = r[1]; } }
+    else o.sp = 0;
+    if (Math.random() < 0.5) W.fx('dust', o.x, 0.1, o.z, 1, 0.3);
+    if (c.t > 0.4) { c.ph = 'snort'; c.t = 0; o.spd = 0; o.sp = 0; Snd.fx('snort'); pop('HMPH!', o, '#78716c'); W.fx('dust', o.x + Math.sin(o.yaw) * 0.4, 0.3, o.z + Math.cos(o.yaw) * 0.4, 3, 0.2); o.P.play('shake', 0.6); }
+  } else { advance(o, A, 0, dt, 0.2); turn(o, yawOf(dx, dz), dt, 6); if (c.t > 0.9) { NPC.lastChargeMin = c.minD; o.charge = null; o.P.play('sit', 1.2); } }
+}
+function nudge(o) { const me = GS.me, dx = me.x - o.x, dz = me.z - o.z, d = Math.hypot(dx, dz) || 1; NPC.push = { vx: dx / d, vz: dz / d, t: 0.4 }; GS.goal = null; }
+const pops = [];
+function pop(text, o, col) {
+  const sp = W.textSprite(text, { size: 34, h: 0.36, bg: col || '#dc2626', border: '#fff' }); sp.position.set(o.x, (o.P.hTop || 0.6) + 0.5, o.z); W.cur.g.add(sp); pops.push({ sp, t: 0, area: W.cur });
+}
+function grumpTick(dt, A) {
+  for (let i = pops.length - 1; i >= 0; i--) { const q = pops[i]; q.t += dt; q.sp.position.y += dt * 0.6; q.sp.material.opacity = Math.max(0, 1 - q.t / 1.1); if (q.t > 1.1) { q.area.g.remove(q.sp); q.sp.material.map.dispose(); q.sp.material.dispose(); pops.splice(i, 1); } }
+  if (NPC.push) { // the player hops back a couple of steps
+    const p = NPC.push, me = GS.me, k = p.t / 0.4, v = 5.5 * k; p.t -= dt;
+    if (G.inGame() && !GS.mg) { const r = W.move(W.cur, me.x, me.z, p.vx * v * dt, p.vz * v * dt, 0.36); me.x = r[0]; me.z = r[1]; }
+    if (p.t <= 0) NPC.push = null;
+  }
+  const n = NPC.byId && NPC.byId('grumble'), Y = W.grumpYard; if (!n || A.id !== n.area || !Y || !G.inGame()) return;
+  const me = GS.me, inYard = me.area === n.area && me.x > Y[0] && me.x < Y[1] + 0.3 && me.z > Y[2] && me.z < Y[3];
+  if (inYard && !n.talk && !GS.talk && !GS.npcPd && G.freeToAct() && performance.now() - n.lastCharge > 5000) startCharge(n);
+}
+NPC.startCharge = (id) => startCharge(NPC.byId(id || 'grumble'));
+NPC.GRUMP_MAX = GRUMP_MAX;
 NPC.state = st; NPC.hearts = hearts; NPC.DEFS = DEFS; NPC.PD_COOLDOWN = PD_COOLDOWN;
 })();

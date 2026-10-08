@@ -131,7 +131,7 @@ UI.map = function () {
 UI.shop = function (cat) {
   GS.shopCat = cat || GS.shopCat || 'food'; const s = sv(); cat = GS.shopCat;
   let h = head('\uD83D\uDECD\uFE0F Pet Shop \u00b7 \uD83E\uDE99 ' + s.coins) + '<div class="tabs">' + Object.keys(GP.CATS).map((k) => '<button class="' + (k === cat ? 'on' : '') + '" data-a="shopTab" data-v="' + k + '">' + GP.CATS[k].toUpperCase() + '</button>').join('') + '</div>';
-  h += '<div class="igrid shop">' + GP.itemsOf(cat).map((k) => {
+  h += '<div class="igrid shop">' + GP.itemsOf(cat).filter((k) => !GP.ITEMS[k].secret).map((k) => {
     const it = GP.ITEMS[k], own = s.inv[k] || 0, uniq = cat === 'toy' || cat === 'acc', done = uniq && own;
     const sub = cat === 'food' ? '+' + it.h + ' food' + (it.fav ? ' \u00b7 \u2764\uFE0F ' + it.fav.map((x) => ({ dog: 'dogs', cat: 'cats', rat: 'rats', hamster: 'hamsters', bird: 'birds', bunny: 'bunnies', tortoise: 'tortoises', pony: 'ponies', fish: 'fish', dragon: 'dragons', hedgehog: 'hedgehogs', robodog: 'robots' })[x]).join(', ') : '') + (own ? ' \u00b7 have ' + own : '') : cat === 'toy' ? (it.note || '+' + it.f + ' fun per fetch') : cat === 'acc' ? it.slot + ' \u00b7 style +' + it.style : cat === 'furn' ? 'comfort +' + it.comfort + (own ? ' \u00b7 own ' + own : '') : it.desc;
     return '<div class="ibtn sh"><i>' + it.icon + '</i><b>' + esc(it.name) + '</b><small>' + esc(sub) + '</small>' + (done ? '<button class="btn small alt" disabled>OWNED</button>' : '<button class="btn small primary" data-a="buy" data-v="' + k + '"' + (s.coins < it.price ? ' disabled' : '') + '>\uD83E\uDE99 ' + it.price + '</button>') + '</div>';
@@ -140,7 +140,7 @@ UI.shop = function (cat) {
   G.openPanel('shop', h);
 };
 function buy(k) {
-  const it = GP.ITEMS[k], s = sv(); if (!it) return;
+  const it = GP.ITEMS[k], s = sv(); if (!it || it.secret) return;
   if ((it.cat === 'toy' || it.cat === 'acc') && s.inv[k]) return;
   if (!G.spend(it.price)) return;
   if (it.cat === 'egg') { G.persist(); hatch(k === 'fegg'); return; }

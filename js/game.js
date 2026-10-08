@@ -709,7 +709,7 @@ function renderScreens() {
   $('hud').classList.toggle('hidden', !ig || !!GS.mg || !!GS.care || !!GS.talk || !!GS.npcPd);
   if (!ig && GP.NPC && (GS.talk || GS.npcPd)) GP.NPC.abort();
   if (!ig && GS.panel) closePanel();
-  if (scr === 'scrTitle') $('titleFoot').textContent = save.pets.length ? save.pets.length + ' pet' + (save.pets.length > 1 ? 's' : '') + ' \u00b7 ' + save.coins + ' coins \u00b7 solo or with friends' : '17 kinds of pets \u00b7 4 mini games \u00b7 play with friends';
+  if (scr === 'scrTitle') $('titleFoot').textContent = save.pets.length ? save.pets.length + ' pet' + (save.pets.length > 1 ? 's' : '') + ' \u00b7 ' + save.coins + ' coins \u00b7 solo or with friends' : '18 kinds of pets \u00b7 4 mini games \u00b7 play with friends';
 }
 function updateMe(dt) {
   const m = GS.me; let ix = 0, iz = 0;
@@ -768,6 +768,7 @@ function updateHUD(dt) {
   $('areaN').textContent = W.cur.zone ? W.cur.zone(GS.me.x, GS.me.z) : W.cur.label;
   const online = G.online() && GS.room; $('roomPill').classList.toggle('hidden', !online); if (online) $('roomN').textContent = GS.room.code + ' \u00b7 ' + S.players.length + '/3';
   const h0 = freeToAct() ? nearestHot() : null, nn = freeToAct() ? nearestNpc() : null, act = $('bAct'), pr = $('prompt');
+  GS.promptNpc = npcFirst(h0, nn) ? nn.n : null;
   const h = npcFirst(h0, nn) ? { id: 'npc_' + nn.n.def.id, kind: 'npc', label: 'TALK', name: nn.n.def.name, x: nn.n.x, z: nn.n.z, py: 2.95 } : h0;
   const label = h ? h.label : 'CARE';
   if ($('actT').textContent !== label) $('actT').textContent = label;

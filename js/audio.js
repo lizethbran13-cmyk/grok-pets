@@ -64,6 +64,8 @@ GP.Snd = (() => {
     bump() { tone(140, 0.2, 'sawtooth', 0.08, 0, null, 80); },
     tick() { tone(1200, 0.03, 'square', 0.04); },
     go() { tone(mf(84), 0.4, 'square', 0.08); },
+    growl() { tone(95, 0.5, 'sawtooth', 0.07, 0, null, 120); noise(0.45, 0.03, 0, 300); },
+    snort() { noise(0.12, 0.09, 0, 700); noise(0.16, 0.07, 0.16, 500); },
     zzz() { tone(220, 0.5, 'sine', 0.04, 0, null, 180); }
   };
   // bouncy major-key loop
