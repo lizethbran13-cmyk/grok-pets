@@ -108,7 +108,7 @@ GP.TRICK_NEED = 3; // successful lessons to learn a trick
 GP.GAMES = [
   { id: 'frisbee', name: 'Frisbee Catch', icon: '\uD83E\uDD4F', col: '#3ff0ff', desc: 'Run under the frisbees and catch them before they land. Chain catches for combos!', goal: 30 },
   { id: 'race', name: 'Pet Race', icon: '\uD83C\uDFC1', col: '#f43f5e', desc: 'Obstacle course! Switch lanes, jump hurdles and grab treats for speed.', goal: 180 },
-  { id: 'show', name: 'Pet Show', icon: '\uD83C\uDFC6', col: '#facc15', desc: 'Talent contest! Judges score happiness, style and tricks. Tap the trick they call!', goal: 110 },
+  { id: 'show', name: 'Pet Show', icon: '\uD83C\uDFC6', col: '#facc15', desc: 'Talent contest! Judges score happiness, style and tricks. Tap the trick they call!', goal: 95 },
   { id: 'dig', name: 'Treasure Dig', icon: '\uD83D\uDC8E', col: '#fb923c', desc: 'Your pet sniffs for buried treasure. Hot or cold? 10 digs to find the most loot!', goal: 110 }
 ];
 GP.gameById = (id) => GP.GAMES.find((g) => g.id === id);

@@ -153,9 +153,11 @@ G.doAct = doAct;
 function syncLooks() {
   const S = S_(); if (!S) return;
   const looks = save.active.map(petById).filter(Boolean).map(G.petLook);
-  const key = JSON.stringify(looks); if (key === GS.lookKey && S.looks[GS.pid]) return; GS.lookKey = key;
-  doAct({ k: 'look', pets: looks });
-  if (GS.role !== 'client') { S.home = { layout: save.home.slice(), pets: save.pets.filter((p) => save.active.indexOf(p.id) < 0).slice(0, 14).map(G.petLook) }; S.beach = !!save.beach; touch(); }
+  const key = JSON.stringify(looks); if (key !== GS.lookKey || !S.looks[GS.pid]) { GS.lookKey = key; doAct({ k: 'look', pets: looks }); }
+  if (GS.role !== 'client') {
+    const home = { layout: save.home.map((f) => Object.assign({}, f)), pets: save.pets.filter((p) => save.active.indexOf(p.id) < 0).slice(0, 14).map(G.petLook) };
+    const hk = JSON.stringify(home) + !!save.beach; if (hk !== GS.hostHomeKey || GS.hostHomeS !== S) { GS.hostHomeKey = hk; GS.hostHomeS = S; S.home = home; S.beach = !!save.beach; touch(); }
+  }
 }
 G.syncLooks = syncLooks;
 
@@ -219,12 +221,16 @@ function applyState(s) {
   GS.S = s; GS.connecting = false;
   if (first) { GS.evSeen = s.evId; GS.mgSeen = s.mg ? s.mg.gid : 0; GS.lookKey = ''; enterWorld(true); }
   if (!s.looks[GS.pid]) GS.lookKey = '';
+  const hk = JSON.stringify((s.home && s.home.layout) || []);
+  if (hk !== GS.homeKey) { GS.homeKey = hk; if (!first && GS.me.area === 'home') W.placeHome(homeLayout()); }
+  if (!!s.beach !== GS.beachSeen) { GS.beachSeen = !!s.beach; refreshGate(); }
   syncLooks();
 }
 function takeOver() {
   const r = GS.room; GS.room = null; GS.role = 'solo'; try { if (r) r.leave(); } catch (e) { /* ignore */ }
   const old = S_(); GS.S = newSession(); GS.pos = {}; playersFromRoom(); GS.lookKey = ''; syncLooks();
   if (GS.mg && GP.MG.active()) GS.mg.solo = true;
+  W.placeHome(save.home); refreshGate(); GS.homeKey = null;
   GS.evSeen = 0; void old;
   G.toast('The host left. You\u2019re back in your own town!', true); Snd.fx('leave');
   if (GS.me.area === 'home') travel('home', true);
@@ -264,7 +270,7 @@ function enterWorld(asGuest) {
   else travel('home', true);
   Snd.music(true);
   checkDaily();
-  if (save.tut > 0 && save.tut < 6 && save.pets.length) setTimeout(() => { if (GS.inWorld && !GS.care && save.active.length) GP.Care.open(save.active[0]); }, 400);
+  if (save.tut > 0 && save.tut < 6 && save.pets.length) setTimeout(() => { if (GS.inWorld && !GS.care && save.active.length && save.tut > 0 && save.tut < 6) GP.Care.open(save.active[0]); }, 400);
 }
 function refreshGate() { const open = !!(save.beach || (GS.S && GS.S.beach)); W.gateObs.off = open; W.gateBar.visible = !open; }
 G.refreshGate = refreshGate;
