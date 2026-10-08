@@ -320,8 +320,9 @@ MD.person = function (o) {
   const sh = new T.Mesh(G.circle, shadowMat()); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.012; sh.scale.setScalar(0.42); g.add(sh);
   const ch = { g, body, head, legs, arms, ph: Math.random() * 6, h: 1.8 };
   ch.anim = function (dt, sp, wave) {
-    ch.ph += dt * (sp > 0.1 ? 10 : 2);
-    const a = sp > 0.1 ? Math.sin(ch.ph) * 0.7 : 0;
+    // stride speed and size follow the real walking speed (no foot sliding when strolling slowly)
+    ch.ph += dt * (sp > 0.1 ? Math.min(10, 2.5 + sp * 4) : 2);
+    const a = sp > 0.1 ? Math.sin(ch.ph) * Math.min(0.7, 0.25 + sp * 0.15) : 0;
     legs[0].rotation.x = a; legs[1].rotation.x = -a; arms[0].rotation.x = -a * 0.8; arms[1].rotation.x = wave ? -2.6 + Math.sin(ch.ph * 3) * 0.3 : a * 0.8;
     body.position.y = sp > 0.1 ? Math.abs(Math.sin(ch.ph)) * 0.05 : Math.sin(ch.ph) * 0.01;
   };

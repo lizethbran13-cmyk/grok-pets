@@ -161,13 +161,7 @@ function buildTown() {
   const bdg = grp(g, 70, 0, -6); box(1.6, 1.2, 0.2, '#fbbf24', bdg, 0, 0.6, 0); const bds = signPlane('DIG HERE!', 2.2, 0.6, '#ea580c'); bds.position.set(0, 1.5, 0.12); bdg.add(bds); obsB(A, 69.2, 70.8, -6.2, -5.8);
   // world border trees
   for (let a = 0; a < 40; a++) { const x = -40 + (a * 9.3) % 130, z = a % 2 ? -52 - (a % 5) : 32 + (a % 4); MD.tree(g, x, z, 1.3, a % 3 ? '#16a34a' : '#15803d'); }
-  // ambient townsfolk walking dogs
-  W.walkers = [];
-  [[0, '#38bdf8', '#7c2d12', 'retriever', ['#e0a84a', '#f3d9a4']], [Math.PI, '#a3e635', '#111827', 'corgi', ['#e08a3a', '#ffffff']]].forEach((q) => {
-    const p = MD.person({ shirt: q[1], hair: q[2] }); g.add(p.g);
-    const d = MD.pet({ sp: q[3], col: q[4], lv: 7, acc: { neck: 'redcollar' } }); g.add(d.g);
-    W.walkers.push({ p, d, a: q[0] });
-  });
+  // ambient townsfolk walking their pets: see npc.js
   A.label = 'Town'; A.zone = function (x, z) { return z < -19 ? 'Your Yard' : x > 56.5 ? 'Beach' : x > 19.5 ? 'Pet Park' : 'Town Plaza'; };
 }
 
@@ -367,11 +361,6 @@ W.tickFx = function (dt) {
   }
   if (W.sea) W.sea.position.y = 0.08 + Math.sin(W.time * 1.2) * 0.03;
   if (W.fountainWater) W.fountainWater.rotation.y += dt * 0.5;
-  if (W.walkers && W.cur && W.cur.id === 'town') W.walkers.forEach((w) => {
-    w.a += dt * 0.07; const r = 9.5, x = Math.cos(w.a) * r, z = Math.sin(w.a) * r * 0.95;
-    w.p.g.position.set(x, 0.05, z); w.p.g.rotation.y = Math.atan2(-Math.sin(w.a), Math.cos(w.a)) + Math.PI; w.p.anim(dt, 2);
-    const a2 = w.a - 0.12; w.d.g.position.set(Math.cos(a2) * (r + 0.8), 0.05, Math.sin(a2) * (r + 0.8) * 0.95); w.d.g.rotation.y = w.p.g.rotation.y; w.d.anim(dt, 2);
-  });
-  [W.shopKeeper, W.vetNpc, W.adoptNpc, W.gameHost].forEach((n) => n && n.anim(dt, 0, Math.sin(W.time * 0.7) > 0.85));
+  if (GP.NPC && GP.NPC.tick) GP.NPC.tick(dt); // townsfolk, shop staff and their pets
 };
 })();

@@ -240,6 +240,7 @@ function leaveSession(silent) {
   if (r) { try { r.leave(); } catch (e) { /* ignore */ } }
   if (GP.MG && GP.MG.active()) GP.MG.abort();
   if (GS.care) GP.Care.close(true);
+  if (GP.NPC) GP.NPC.abort();
   GS.S = null; GS.role = null; GS.connecting = false; GS.pos = {}; GS.goal = null; GS.inWorld = false; GS.mg = null;
   closePanel(); $('scrMenu').classList.add('hidden');
   for (const k in GS.av) W.scene.remove(GS.av[k].ch.g); GS.av = {};
@@ -316,11 +317,13 @@ function followStep(o, tx, tz, dt, speedCap, A) {
   const dx = tx - o.x, dz = tz - o.z, d = Math.hypot(dx, dz);
   if (d > 16) { const f = W.freeNear(A, tx, tz, 0.25); o.x = f[0]; o.z = f[1]; o.sp = 0; return; }
   if (d > 0.35) {
-    const sp = Math.min(speedCap, d * 2.6 + 0.6), nx = o.x + dx / d * sp * dt, nz = o.z + dz / d * sp * dt;
+    // turn first, then move: pets only move while facing (close to) the way they go, so they never walk backwards or slide sideways
+    const ty = Math.atan2(dx, dz); let a = ty - o.yaw; a = Math.atan2(Math.sin(a), Math.cos(a)); o.yaw += a * Math.min(1, dt * 10);
+    const al = Math.cos(Math.atan2(Math.sin(ty - o.yaw), Math.cos(ty - o.yaw))), face = clamp((al - 0.72) / 0.23, 0, 1);
+    const sp = Math.min(speedCap, d * 2.6 + 0.6) * face, nx = o.x + dx / d * sp * dt, nz = o.z + dz / d * sp * dt;
     const r = W.move(A, o.x, o.z, nx - o.x, nz - o.z, 0.22); const moved = Math.hypot(r[0] - o.x, r[1] - o.z);
     o.x = r[0]; o.z = r[1]; o.sp = moved / Math.max(dt, 1e-3);
-    if (moved < sp * dt * 0.3) { o.stuck += dt; if (o.stuck > 1.2 && d > 2.5) { const f = W.freeNear(A, tx, tz, 0.25); o.x = f[0]; o.z = f[1]; o.stuck = 0; } } else o.stuck = 0;
-    const ty = Math.atan2(dx, dz); let a = ty - o.yaw; a = Math.atan2(Math.sin(a), Math.cos(a)); o.yaw += a * Math.min(1, dt * 10);
+    if (face > 0.5 && moved < sp * dt * 0.3) { o.stuck += dt; if (o.stuck > 1.2 && d > 2.5) { const f = W.freeNear(A, tx, tz, 0.25); o.x = f[0]; o.z = f[1]; o.stuck = 0; } } else if (face > 0.5) o.stuck = 0;
   } else o.sp = 0;
 }
 function updateMyPets(dt) {
@@ -333,7 +336,8 @@ function updateMyPets(dt) {
     petTag(o, p.name, prof.color);
     if (GS.care && GS.care.id === id) { o.tag.visible = false; if (o.need) o.need.visible = false; o.P.g.position.set(o.x, 0, o.z); o.P.g.rotation.y = o.yaw; return; }
     needTag(o, G.needIcon(p)); if (o.need) o.need.visible = true;
-    if (GS.find && GS.find.pet === id) { // walk-find: run to the sparkle and dig
+    if (GS.npcPd && GS.npcPd.id === id && GP.NPC) GP.NPC.pdPet(o, dt); // playdate with a townsperson's pet
+    else if (GS.find && GS.find.pet === id) { // walk-find: run to the sparkle and dig
       const f = GS.find; followStep(o, f.x, f.z, dt, 6, A);
       if (Math.hypot(f.x - o.x, f.z - o.z) < 0.6) { if (!f.dig) { f.dig = 1.3; o.P.play('dig', 1.3); Snd.fx('dig'); } }
       if (f.dig) { f.dig -= dt; if (Math.random() < 0.3) W.fx('dust', f.x, 0.2, f.z, 1, 0.5); if (f.dig <= 0) finishFind(p, o); }
@@ -451,7 +455,7 @@ function mgTick() {
 G.leadPet = function () { let p = petById(save.active[0]); if (!p && save.pets.length) { save.active = [save.pets[0].id]; p = save.pets[0]; } return p; };
 G.startGame = function (id, net) {
   const p = G.leadPet(); if (!p) return;
-  closePanel(); if (GS.care) GP.Care.close(true); $('scrMenu').classList.add('hidden');
+  closePanel(); if (GS.care) GP.Care.close(true); $('scrMenu').classList.add('hidden'); if (GP.NPC) GP.NPC.abort();
   GS.mg = { id, gid: net ? net.gid : 0, mode: net ? net.mode : 'solo', ret: { a: GS.me.area, x: GS.me.x, z: GS.me.z }, sent: 0, last: '', finished: false, solo: !net };
   GS.joyReset && GS.joyReset();
   W.setArea('arena'); clearPets();
@@ -508,7 +512,10 @@ G.mgExit = function () {
    ====================================================================== */
 function inGame() { return GS.ui === 'game' && GS.inWorld && GS.S; }
 G.inGame = inGame;
-function freeToAct() { return inGame() && !GS.panel && !GS.care && !GS.mg && $('scrMenu').classList.contains('hidden'); }
+function freeToAct() { return inGame() && !GS.panel && !GS.care && !GS.mg && !GS.talk && !GS.npcPd && $('scrMenu').classList.contains('hidden'); }
+// townsperson / shop staff within talking range (null if none)
+function nearestNpc() { return GP.NPC && W.cur ? GP.NPC.nearest(GS.me.x, GS.me.z) : null; }
+function npcFirst(h, nn) { return nn && (!h || nn.d < Math.hypot(h.x - GS.me.x, h.z - GS.me.z)); }
 function nearestHot() {
   if (!W.cur) return null; let best = null, bd = 1e9;
   for (const h of W.cur.hots) { if (h.id === 'gate' && W.gateObs.off) continue; const d = Math.hypot(h.x - GS.me.x, h.z - GS.me.z); if (d <= h.reach && d < bd) { bd = d; best = h; } }
@@ -523,14 +530,14 @@ function interact(h) {
     case 'adopt': G.UI.adopt(null); break;
     case 'pen': G.UI.adopt(h.sp); break;
     case 'family': G.UI.family(); break;
-    case 'vet': G.UI.vet(h.tab); break;
+    case 'vet': if (h.id === 'vet_desk' && GP.NPC && GP.NPC.talk('pawla')) break; G.UI.vet(h.tab); break;
     case 'stand': G.UI.games(h.beach); break;
     case 'gate': G.UI.gate(); break;
   }
 }
 function pressAct() {
   Snd.init(); if (!freeToAct()) return;
-  const h = nearestHot(); if (h) { interact(h); return; }
+  const h = nearestHot(), nn = nearestNpc(); if (npcFirst(h, nn)) { GP.NPC.talk(nn.n); return; } if (h) { interact(h); return; }
   if (save.active.length) GP.Care.open(nearestActivePet()); else G.toast('Walk up to a door or sign, or pick a pet to walk with in PETS.');
 }
 function nearestActivePet() { let best = save.active[0], bd = 1e9; save.active.forEach((id) => { const o = GS.p3[id]; if (o) { const d = Math.hypot(o.x - GS.me.x, o.z - GS.me.z); if (d < bd) { bd = d; best = id; } } }); return best; }
@@ -591,6 +598,7 @@ addEventListener('keydown', (e) => {
   if (!inGame()) return;
   if (GS.mg) { GP.MG.key(e.code, true, e); return; }
   if (GS.care) { GP.Care.key(e.code, e); return; }
+  if (GS.talk) { if (e.code === 'Escape') GP.NPC.close(); return; }
   if (e.code === 'Escape') { if (GS.panel) closePanel(); else $('scrMenu').classList.toggle('hidden'); return; }
   if (e.repeat) return;
   if (GS.panel) { if (e.code === 'Enter' && GS.panel === 'daily') closePanel(); return; }
@@ -633,6 +641,8 @@ function tapAt(x, y) {
   if (!freeToAct()) return;
   // tap one of my pets -> care
   for (const id of save.active) { const o = GS.p3[id]; if (o && W.hitObj(x, y, o.P.g)) { GP.Care.open(id); return; } }
+  const tn = GP.NPC && GP.NPC.hit(x, y);
+  if (tn) { const d = Math.hypot(tn.x - GS.me.x, tn.z - GS.me.z); if (d <= tn.reach) GP.NPC.talk(tn); else GS.goal = { x: tn.x, z: tn.z, npc: tn, best: 1e9, stuck: 0 }; return; }
   let best = null, bd = 50;
   for (const h of W.cur.hots) { if (h.id === 'gate' && W.gateObs.off) continue; const p = W.project(h.x, 0.8, h.z), d = Math.hypot(p.x - x, p.y - y); if (p.vis && d < bd) { bd = d; best = h; } }
   if (best) { const d = Math.hypot(best.x - GS.me.x, best.z - GS.me.z); if (d <= best.reach) interact(best); else GS.goal = { x: best.x, z: best.z, hot: best, best: 1e9, stuck: 0 }; return; }
@@ -696,7 +706,8 @@ function renderScreens() {
   if (GS.ui === 'title') scr = 'scrTitle'; else if (GS.ui === 'online') scr = 'scrOnline'; else if (GS.ui === 'starter') scr = 'scrStarter';
   ['scrTitle', 'scrOnline', 'scrStarter'].forEach((id) => $(id).classList.toggle('hidden', id !== scr));
   const ig = inGame();
-  $('hud').classList.toggle('hidden', !ig || !!GS.mg || !!GS.care);
+  $('hud').classList.toggle('hidden', !ig || !!GS.mg || !!GS.care || !!GS.talk || !!GS.npcPd);
+  if (!ig && GP.NPC && (GS.talk || GS.npcPd)) GP.NPC.abort();
   if (!ig && GS.panel) closePanel();
   if (scr === 'scrTitle') $('titleFoot').textContent = save.pets.length ? save.pets.length + ' pet' + (save.pets.length > 1 ? 's' : '') + ' \u00b7 ' + save.coins + ' coins \u00b7 solo or with friends' : '17 kinds of pets \u00b7 4 mini games \u00b7 play with friends';
 }
@@ -709,8 +720,9 @@ function updateMe(dt) {
   let mag = Math.hypot(ix, iz);
   if (mag > 0.05) GS.goal = null;
   else if (GS.goal) {
-    const g = GS.goal, dx = g.x - m.x, dz = g.z - m.z, d = Math.hypot(dx, dz), stop = g.hot ? Math.max(0.6, g.hot.reach - 0.3) : 0.2;
-    if (d <= stop) { const h = g.hot; GS.goal = null; if (h) interact(h); }
+    const g = GS.goal; if (g.npc) { g.x = g.npc.x; g.z = g.npc.z; }
+    const dx = g.x - m.x, dz = g.z - m.z, d = Math.hypot(dx, dz), stop = g.npc ? g.npc.reach - 0.4 : g.hot ? Math.max(0.6, g.hot.reach - 0.3) : 0.2;
+    if (d <= stop) { const h = g.hot, n = g.npc; GS.goal = null; if (n) GP.NPC.talk(n); else if (h) interact(h); }
     else { ix = dx / d; iz = dz / d; mag = 1; if (d < g.best - 0.05) { g.best = d; g.stuck = 0; } else { g.stuck += dt; if (g.stuck > 0.6) GS.goal = null; } }
   }
   if (mag > 1) { ix /= mag; iz /= mag; mag = 1; }
@@ -755,12 +767,13 @@ function updateHUD(dt) {
   $('coinN').textContent = save.coins; $('coinPill').style.transform = GS.coinFlash > 0 ? 'scale(' + (1 + GS.coinFlash * 0.15) + ')' : '';
   $('areaN').textContent = W.cur.zone ? W.cur.zone(GS.me.x, GS.me.z) : W.cur.label;
   const online = G.online() && GS.room; $('roomPill').classList.toggle('hidden', !online); if (online) $('roomN').textContent = GS.room.code + ' \u00b7 ' + S.players.length + '/3';
-  const h = freeToAct() ? nearestHot() : null, act = $('bAct'), pr = $('prompt');
+  const h0 = freeToAct() ? nearestHot() : null, nn = freeToAct() ? nearestNpc() : null, act = $('bAct'), pr = $('prompt');
+  const h = npcFirst(h0, nn) ? { id: 'npc_' + nn.n.def.id, kind: 'npc', label: 'TALK', name: nn.n.def.name, x: nn.n.x, z: nn.n.z, py: 2.95 } : h0;
   const label = h ? h.label : 'CARE';
   if ($('actT').textContent !== label) $('actT').textContent = label;
-  act.className = h ? (h.kind === 'door' || h.kind === 'exit' ? 'door' : '') : 'dim';
+  act.className = h ? (h.kind === 'door' || h.kind === 'exit' ? 'door' : h.kind === 'npc' ? 'talk' : '') : 'dim';
   $('bCare').classList.toggle('hidden', !h);
-  if (h) { const p = W.project(h.x, 1.9, h.z), k = h.id + label; if (k !== promptKey) { promptKey = k; pr.innerHTML = '<b>' + label + '</b> ' + esc(h.name); } pr.style.left = Math.round(p.x) + 'px'; pr.style.top = Math.round(p.y) + 'px'; pr.classList.remove('hidden'); }
+  if (h) { const p = W.project(h.x, h.py || 1.9, h.z), k = h.id + label; if (k !== promptKey) { promptKey = k; pr.innerHTML = (h.kind === 'npc' ? '\uD83D\uDCAC ' : '') + '<b>' + label + '</b> ' + esc(h.name); } pr.style.left = Math.round(p.x) + 'px'; pr.style.top = Math.round(p.y) + 'px'; pr.classList.remove('hidden'); }
   else { pr.classList.add('hidden'); promptKey = ''; }
   $('bDecor').classList.toggle('hidden', GS.me.area !== 'home');
   $('bPlaydate').classList.toggle('hidden', !(G.online() && friendNear()));
@@ -812,7 +825,7 @@ function titleDemo(dt) {
 
 /* ---------------- boot ---------------- */
 G.boot = function () {
-  W.init($('c')); W.build(); W.setArea('town');
+  W.init($('c')); W.build(); if (GP.NPC) GP.NPC.init(); W.setArea('town');
   G.portraitInit(); W.fillPens(G.pensLineup());
   addEventListener('resize', () => W.resize());
   addEventListener('pagehide', () => persist());
@@ -835,7 +848,7 @@ window.__gp = {
   tp(x, z) { GS.me.x = x; GS.me.z = z; GS.goal = null; },
   go(area, at) { closePanel(); travel(area, true, at); },
   hot(id) { const h = W.cur.hots.find((q) => q.id === id); if (!h) return 'nohot'; const f = W.freeNear(W.cur, h.x, h.z, 0.36); GS.me.x = f[0]; GS.me.z = f[1]; if (Math.hypot(h.x - f[0], h.z - f[1]) > h.reach) return 'far'; interact(h); return GS.panel || 'none'; },
-  panel: () => GS.panel, care: () => GS.care, mg: () => GS.mg,
+  panel: () => GS.panel, care: () => GS.care, mg: () => GS.mg, talk: () => GS.talk, npcPd: () => GS.npcPd,
   netDebug: () => ({ role: GS.role, code: GS.room && GS.room.code, players: GS.S ? GS.S.players.map((p) => p.name) : [], pos: GS.pos, area: GS.me.area, looks: GS.S ? GS.S.looks : {} })
 };
 })();
