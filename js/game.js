@@ -102,6 +102,7 @@ G.friends = () => { const S = S_(); return S ? S.players.filter((p) => p.pid !==
 function hostAct(pid, m) {
   const S = S_(); if (!S || !m) return; const isHostMe = pid === GS.pid;
   switch (m.k) {
+    case 'ch': if (GP.Chaos) GP.Chaos.hostAct(pid, m); break;
     case 'look': if (Array.isArray(m.pets)) { S.looks[pid] = m.pets.slice(0, 3).map(cleanLook).filter(Boolean); touch(); } break;
     case 'gift': { const to = S.players.find((p) => p.pid === m.to); if (!to || to.pid === pid) return; const it = m.item === 'coins' ? 'coins' : GP.ITEMS[m.item] && GP.ITEMS[m.item].cat === 'food' ? m.item : null; if (!it) return; pushEv({ type: 'gift', to: to.pid, from: pid, by: playerInfo(pid).name, item: it, n: clamp(+m.n || 1, 1, 100) }); break; }
     case 'playdate': {
@@ -203,6 +204,7 @@ function joinOnline(code) {
     if (!d || GS.room !== room) return;
     if (d.t === 'st' && d.s) applyState(d.s);
     else if (d.t === 'pp' && d.p) { for (const k in d.p) if (k !== GS.pid) GS.pos[k] = d.p[k]; for (const k in GS.pos) if (!d.p[k]) delete GS.pos[k]; }
+    else if (d.t === 'cs' && GP.Chaos) GP.Chaos.onState(d.s);
   });
   room.on('join', (p) => { if (GS.S) { G.toast(p.name + ' joined!'); Snd.fx('join'); } });
   room.on('leave', (p) => { if (GS.S && !p.host) { G.toast(p.name + ' went home', true); Snd.fx('leave'); } });
@@ -236,6 +238,7 @@ function takeOver() {
   if (GS.me.area === 'home') travel('home', true);
 }
 function leaveSession(silent) {
+  if (GP.Chaos) GP.Chaos.abort();
   const r = GS.room; GS.room = null;
   if (r) { try { r.leave(); } catch (e) { /* ignore */ } }
   if (GP.MG && GP.MG.active()) GP.MG.abort();
@@ -271,7 +274,7 @@ function enterWorld(asGuest) {
   else travel('home', true);
   Snd.music(true);
   checkDaily();
-  if (save.tut > 0 && save.tut < 6 && save.pets.length) setTimeout(() => { if (GS.inWorld && !GS.care && save.active.length && save.tut > 0 && save.tut < 6) GP.Care.open(save.active[0]); }, 400);
+  if (save.tut > 0 && save.tut < 6 && save.pets.length) setTimeout(() => { if (GS.inWorld && !GS.care && !GS.panel && !GS.chaos && save.active.length && save.tut > 0 && save.tut < 6) GP.Care.open(save.active[0]); }, 400);
 }
 function refreshGate() { const open = !!(save.beach || (GS.S && GS.S.beach)); W.gateObs.off = open; W.gateBar.visible = !open; }
 G.refreshGate = refreshGate;
@@ -455,6 +458,7 @@ function mgTick() {
 G.leadPet = function () { let p = petById(save.active[0]); if (!p && save.pets.length) { save.active = [save.pets[0].id]; p = save.pets[0]; } return p; };
 G.startGame = function (id, net) {
   const p = G.leadPet(); if (!p) return;
+  if (GS.chaos && GP.Chaos) GP.Chaos.exit();
   closePanel(); if (GS.care) GP.Care.close(true); $('scrMenu').classList.add('hidden'); if (GP.NPC) GP.NPC.abort();
   GS.mg = { id, gid: net ? net.gid : 0, mode: net ? net.mode : 'solo', ret: { a: GS.me.area, x: GS.me.x, z: GS.me.z }, sent: 0, last: '', finished: false, solo: !net };
   GS.joyReset && GS.joyReset();
@@ -512,7 +516,7 @@ G.mgExit = function () {
    ====================================================================== */
 function inGame() { return GS.ui === 'game' && GS.inWorld && GS.S; }
 G.inGame = inGame;
-function freeToAct() { return inGame() && !GS.panel && !GS.care && !GS.mg && !GS.talk && !GS.npcPd && $('scrMenu').classList.contains('hidden'); }
+function freeToAct() { return inGame() && !GS.panel && !GS.care && !GS.mg && !GS.chaos && !GS.talk && !GS.npcPd && $('scrMenu').classList.contains('hidden'); }
 // townsperson / shop staff within talking range (null if none)
 function nearestNpc() { return GP.NPC && W.cur ? GP.NPC.nearest(GS.me.x, GS.me.z) : null; }
 function npcFirst(h, nn) { return nn && (!h || nn.d < Math.hypot(h.x - GS.me.x, h.z - GS.me.z)); }
@@ -566,6 +570,7 @@ function checkDaily() {
   const streak = save.daily.last === ys ? Math.min(7, save.daily.streak + 1) : 1;
   const coins = 40 + streak * 10, gift = streak >= 7 ? 'cupcake' : streak >= 3 ? 'steak' : 'kibble';
   save.daily = { last: t, streak }; G.addCoins(coins); save.inv[gift] = (save.inv[gift] || 0) + (streak >= 7 ? 2 : 1); persist();
+  if (GS.chaos || GS.panel === 'chaos') { G.toast('\uD83C\uDF1E Daily reward: +' + coins + ' coins!'); return; }
   setTimeout(() => openPanel('daily', head('\uD83C\uDF1E Daily Reward') + '<div class="streak">' + [1, 2, 3, 4, 5, 6, 7].map((d) => '<span class="' + (d <= streak ? 'on' : '') + '">' + d + '</span>').join('') + '</div><p class="sub">Day ' + streak + ' streak! Come back tomorrow for more.</p><div class="reward">\uD83E\uDE99 +' + coins + ' coins &nbsp; ' + GP.ITEMS[gift].icon + ' +' + (streak >= 7 ? 2 : 1) + ' ' + GP.ITEMS[gift].name + '</div><div class="btnrow"><button class="btn primary" data-a="close">YAY!</button></div>'), 700);
 }
 /* family unlocks */
@@ -597,6 +602,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyM') { toggleMute(); return; }
   if (!inGame()) return;
   if (GS.mg) { GP.MG.key(e.code, true, e); return; }
+  if (GS.chaos) { GP.Chaos.key(e.code, true, e); return; }
   if (GS.care) { GP.Care.key(e.code, e); return; }
   if (GS.talk) { if (e.code === 'Escape') GP.NPC.close(); return; }
   if (e.code === 'Escape') { if (GS.panel) closePanel(); else $('scrMenu').classList.toggle('hidden'); return; }
@@ -677,6 +683,7 @@ $('bMute').style.opacity = Snd.isMuted() ? 0.45 : 1; $('bMute').innerHTML = Snd.
   $('bSolo').onclick = () => { Snd.init(); need(); then(startSolo); };
   $('bOnline').onclick = () => { Snd.init(); need(); then(() => { GS.ui = 'online'; setOnlineMsg(''); }); };
   $('bHow').onclick = () => $('scrHow').classList.remove('hidden');
+  $('bChaos').onclick = () => { Snd.init(); need(); then(() => { startSolo(); setTimeout(() => GP.Chaos.lobby(), 80); }); };
   $('bHowBack').onclick = () => $('scrHow').classList.add('hidden');
   $('bOnlineBack').onclick = () => { leaveSession(); GS.ui = 'title'; };
   $('bHost').onclick = () => { Snd.init(); need(); hostOnline(); };
@@ -684,6 +691,7 @@ $('bMute').style.opacity = Snd.isMuted() ? 0.45 : 1; $('bMute').innerHTML = Snd.
   ci.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('bJoin').click(); });
   $('bJoin').onclick = () => { Snd.init(); need(); joinOnline(ci.value); };
   $('bResume').onclick = () => $('scrMenu').classList.add('hidden');
+  $('bMenuChaos').onclick = () => { $('scrMenu').classList.add('hidden'); if (GS.mg) { G.toast('Finish the mini game first!', true); return; } if (GS.care) GP.Care.close(true); GP.Chaos.lobby(); };
   $('bMenuHow').onclick = () => { $('scrMenu').classList.add('hidden'); $('scrHow').classList.remove('hidden'); };
   $('bSkipTut').onclick = () => { save.tut = 6; persist(); $('scrMenu').classList.add('hidden'); G.toast('Tutorial skipped. Have fun!'); };
   $('bQuit').onclick = () => { persist(); leaveSession(); };
@@ -706,7 +714,7 @@ function renderScreens() {
   if (GS.ui === 'title') scr = 'scrTitle'; else if (GS.ui === 'online') scr = 'scrOnline'; else if (GS.ui === 'starter') scr = 'scrStarter';
   ['scrTitle', 'scrOnline', 'scrStarter'].forEach((id) => $(id).classList.toggle('hidden', id !== scr));
   const ig = inGame();
-  $('hud').classList.toggle('hidden', !ig || !!GS.mg || !!GS.care || !!GS.talk || !!GS.npcPd);
+  $('hud').classList.toggle('hidden', !ig || !!GS.mg || !!GS.chaos || !!GS.care || !!GS.talk || !!GS.npcPd);
   if (!ig && GP.NPC && (GS.talk || GS.npcPd)) GP.NPC.abort();
   if (!ig && GS.panel) closePanel();
   if (scr === 'scrTitle') $('titleFoot').textContent = save.pets.length ? save.pets.length + ' pet' + (save.pets.length > 1 ? 's' : '') + ' \u00b7 ' + save.coins + ' coins \u00b7 solo or with friends' : '18 kinds of pets \u00b7 4 mini games \u00b7 play with friends';
@@ -797,7 +805,8 @@ function frame(now) {
   W.tickFx(dt);
   if (inGame()) {
     decayAcc += dt; if (decayAcc >= 1) { save.pets.forEach((p) => decay(p, decayAcc, save.active.indexOf(p.id) >= 0 && !(GS.care && GS.care.sleeping && GS.care.id === p.id))); decayAcc = 0; }
-    if (GS.mg) { GP.MG.tick(dt); }
+    if (GS.chaos) GP.Chaos.tick(dt);
+    else if (GS.mg) { GP.MG.tick(dt); }
     else {
       updateMe(dt); updateAvatars(dt); updateMyPets(dt); updateHomePets(dt); updateRemotePets(dt);
       if (GS.care) GP.Care.tick(dt); else updateHUD(dt);

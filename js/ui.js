@@ -215,6 +215,7 @@ UI.games = function (beach) {
   const list = beach ? GP.GAMES.filter((g) => g.id === 'dig') : GP.GAMES;
   h += list.map((g) => '<div class="gcard' + (GS.suggest === g.id && host ? ' sug' : '') + '" style="--c:' + g.col + '"><i>' + g.icon + '</i><div><b>' + g.name + '</b><small>' + g.desc + '</small><small>Best: ' + (s.best[g.id] || 0) + (GS.suggest === g.id && host ? ' \u00b7 \uD83D\uDCA1 a friend picked this!' : '') + '</small></div>' +
     (client ? '<button class="btn small blue" data-a="mgSuggest" data-v="' + g.id + '">SUGGEST</button>' : '<button class="btn small primary" data-a="mgPlay" data-v="' + g.id + '">' + (host && G.friends().length ? 'START ALL' : 'PLAY') + '</button>') + '</div>').join('');
+  if (!beach) h += '<div class="gcard" style="--c:#f97316"><i>\uD83D\uDCA5</i><div><b>Animal Chaos</b><small>Be the pet! Make a mess, confuse your owner and escape Animal Control.' + (G.online() ? ' Co-op for friends!' : '') + '</small></div><button class="btn small primary" data-a="chOpen">' + (client ? 'OPEN' : 'PLAY') + '</button></div>';
   if (client) h += '<p class="sub small">The host starts mini games for everyone. Tap SUGGEST to ask for one!</p>';
   G.openPanel('games', h);
 };

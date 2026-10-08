@@ -259,3 +259,60 @@ body.incare #toasts { top: auto; bottom: calc(196px + var(--sb)); }
   #talkBtns { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
   #talkBtns[data-n="5"] .btn:last-child, #talkBtns[data-n="3"] .btn:last-child { grid-column: auto; }
 }
+
+/* ---------- Animal Chaos ---------- */
+.btn.chaos { background: linear-gradient(180deg,#ffb04a,#ea580c); }
+#chHud { position: fixed; inset: 0; z-index: 12; pointer-events: none; color: #fff; }
+#chTouch { position: absolute; inset: 0; pointer-events: auto; touch-action: none; }
+#chJoy { position: absolute; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 3px solid rgba(255,255,255,.75); background: rgba(58,23,71,.25); display: none; pointer-events: none; }
+#chJoy.on { display: block; }
+#chKnob { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; background: rgba(255,255,255,.9); border: 3px solid #ff6bd6; }
+#chTop { position: absolute; top: calc(8px + var(--st)); left: calc(8px + var(--sl)); right: calc(8px + var(--sr)); display: flex; gap: 5px; align-items: center; }
+.chPill { background: rgba(58,23,71,.85); border: 3px solid #ffd23f; border-radius: 16px; padding: 5px 9px; font-size: 15px; font-weight: 800; white-space: nowrap; }
+#chLv { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+#chTime.low { border-color: #ef4444; animation: pulse .6s infinite; }
+#chQuit { pointer-events: auto; width: 44px; height: 44px; flex: 0 0 44px; font-size: 18px; }
+#chBars { position: absolute; top: calc(60px + var(--st)); left: calc(8px + var(--sl)); right: calc(8px + var(--sr)); display: flex; flex-direction: column; gap: 4px; }
+.chBar { position: relative; height: 22px; border-radius: 11px; background: rgba(58,23,71,.8); border: 2px solid #fff; overflow: hidden; }
+.chBar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg,#facc15,#f97316); }
+.chBar.hot i { background: linear-gradient(90deg,#f97316,#ef4444); }
+.chBar.heat i { background: linear-gradient(90deg,#60a5fa,#a855f7,#ef4444); }
+.chBar.alert { border-color: #ef4444; animation: pulse .7s infinite; }
+.chBar span { position: relative; display: block; padding: 0 10px; font-size: 13px; line-height: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000; }
+#chMid { position: absolute; top: calc(114px + var(--st)); left: calc(8px + var(--sl)); right: calc(8px + var(--sr)); display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+#chGoals { pointer-events: auto; display: flex; flex-direction: column; gap: 3px; max-width: 64%; }
+.chGoal { background: rgba(255,255,255,.9); color: #3a1747; border-radius: 10px; padding: 3px 8px; font-size: 12.5px; font-weight: 700; line-height: 1.25; }
+.chGoal.on { background: rgba(187,247,208,.95); color: #14532d; }
+.chGoal b { color: #c026d3; }
+.chTeam { background: rgba(124,58,237,.9); border-radius: 10px; padding: 3px 8px; font-size: 12.5px; font-weight: 800; }
+#chMates { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+.chMate { background: rgba(58,23,71,.85); border: 2px solid var(--c); border-radius: 12px; padding: 2px 8px; font-size: 12.5px; white-space: nowrap; }
+.chMate.cg { border-color: #ef4444; } .chMate.off { opacity: .5; }
+#chMsg { position: absolute; top: 36%; left: 50%; transform: translate(-50%,-50%); width: max-content; max-width: 92vw; font-size: 34px; font-weight: 900; text-align: center; text-shadow: 0 4px 0 #d0359a, -3px -3px 0 #3a1747, 3px -3px 0 #3a1747, -3px 3px 0 #3a1747, 3px 3px 0 #3a1747; white-space: normal; }
+#chMsg.big { font-size: 80px; }
+#chMsg small { display: block; font-size: 16px; font-weight: 800; text-shadow: 0 2px 3px #000; margin-top: 4px; }
+#chMsg.pop { animation: chpop .35s ease-out; }
+@keyframes chpop { from { transform: translate(-50%,-50%) scale(.5); opacity: 0; } }
+#chBadge { position: absolute; left: calc(10px + var(--sl)); bottom: calc(22px + var(--sb)); max-width: calc(100% - 222px); background: rgba(58,23,71,.85); border: 2px solid #fff; border-radius: 14px; padding: 6px 10px; font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+.chBtn { position: absolute; pointer-events: auto; touch-action: none; border-radius: 50%; border: 5px solid #fff; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: 900; box-shadow: 0 6px 0 rgba(0,0,0,.25); text-shadow: 0 2px 0 rgba(0,0,0,.3); padding: 4px; line-height: 1.05; }
+.chBtn b { font-size: 16px; } .chBtn small { font-size: 11px; font-weight: 800; }
+.chBtn.sm b { font-size: 24px; }
+#chAct { right: calc(14px + var(--sr)); bottom: calc(20px + var(--sb)); width: 100px; height: 100px; background: radial-gradient(circle at 40% 35%, #ffc27a, #ea580c); }
+#chAct.dim { filter: saturate(.3) brightness(.9); }
+#chDash { right: calc(124px + var(--sr)); bottom: calc(26px + var(--sb)); width: 74px; height: 74px; border-width: 4px; background: radial-gradient(circle at 40% 35%, #a5f3fc, #0284c7); }
+#chAb { right: calc(28px + var(--sr)); bottom: calc(132px + var(--sb)); width: 74px; height: 74px; border-width: 4px; background: radial-gradient(circle at 40% 35%, #e9d5ff, #7c3aed); }
+.chBtn.cd { filter: grayscale(.8) brightness(.8); }
+body.inchaos #toasts { top: auto; bottom: calc(222px + var(--sb)); }
+.chH { margin: 10px 0 6px; font-size: 17px; }
+.chRoster { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.chPet { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; border-radius: 14px; border: 3px solid #e9d5ff; background: #faf5ff; color: #3a1747; font-size: 13px; }
+.chPet img { width: 52px; height: 52px; } .chPet small { font-size: 11px; } .chPet.on { border-color: #f97316; background: #ffedd5; }
+.chPick { margin: 8px 0; padding: 8px 10px; border-radius: 14px; background: #fff7ed; color: #7c2d12; font-size: 14px; line-height: 1.35; text-align: left; } .chPick span { color: #7c3aed; }
+.chLevels { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.chLv { display: grid; grid-template-columns: 30px 1fr; align-items: center; text-align: left; padding: 6px 8px; border-radius: 14px; border: 3px solid #e9d5ff; background: #faf5ff; color: #3a1747; font-size: 13px; }
+.chLv i { grid-row: span 2; font-style: normal; font-size: 22px; } .chLv small { color: #b45309; } .chLv.on { border-color: #f97316; background: #ffedd5; } .chLv:disabled { opacity: .5; }
+.chPlayers { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 8px 0; font-size: 13px; } .chPlayers span { background: #ede9fe; color: #3a1747; border-radius: 10px; padding: 3px 8px; }
+.chStars { font-size: 44px; color: #f59e0b; text-align: center; letter-spacing: 4px; } .chStars i { font-style: normal; color: #d1d5db; }
+.chRes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; } .chRes div { background: #faf5ff; border-radius: 14px; padding: 8px 4px; text-align: center; color: #3a1747; } .chRes b { display: block; font-size: 22px; } .chRes small { font-size: 12px; }
+.chGoalsRes { display: flex; flex-direction: column; gap: 4px; margin: 6px 0; } .chGoalsRes .chGoal { font-size: 14px; background: #f3f4f6; }
+.how { text-align: left; padding-left: 22px; font-size: 15px; line-height: 1.35; } .how li { margin: 5px 0; } #pnlCard .row { margin-top: 8px; flex-wrap: wrap; }

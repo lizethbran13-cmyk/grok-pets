@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#ff6bd6" />
   <title>GROK PETS</title>
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff6bd6'/%3E%3Ccircle cx='32' cy='40' r='13' fill='%23fff'/%3E%3Ccircle cx='17' cy='24' r='7' fill='%23fff'/%3E%3Ccircle cx='27' cy='15' r='7' fill='%23fff'/%3E%3Ccircle cx='38' cy='15' r='7' fill='%23fff'/%3E%3Ccircle cx='48' cy='24' r='7' fill='%23fff'/%3E%3C/svg%3E" />
 </head>
 <body>
@@ -67,6 +67,20 @@
     <div id="mgBtns"></div>
   </div>
 
+  <!-- animal chaos HUD -->
+  <div id="chHud" class="hidden">
+    <div id="chTouch"></div>
+    <div id="chJoy"><div id="chKnob"></div></div>
+    <div id="chTop"><div id="chLv" class="chPill"></div><div id="chTime" class="chPill"></div><div id="chScore" class="chPill"></div><button id="chQuit" class="rbtn" type="button" aria-label="Leave">&#10005;</button></div>
+    <div id="chBars"><div class="chBar" id="chComboB"><i id="chComboF"></i><span id="chComboT"></span></div><div class="chBar heat" id="chHeatB"><i id="chHeatF"></i><span id="chHeatT"></span></div></div>
+    <div id="chMid"><div id="chGoals"></div><div id="chMates"></div></div>
+    <div id="chMsg" class="hidden"></div>
+    <div id="chBadge"></div>
+    <button id="chAb" class="chBtn sm" type="button"></button>
+    <button id="chDash" class="chBtn sm" type="button"></button>
+    <button id="chAct" class="chBtn" type="button"></button>
+  </div>
+
   <!-- title -->
   <div id="scrTitle" class="screen">
     <div class="card title">
@@ -79,6 +93,7 @@
       <div class="btncol">
         <button id="bSolo" class="btn primary" type="button">PLAY</button>
         <button id="bOnline" class="btn blue" type="button">PLAY WITH FRIENDS</button>
+        <button id="bChaos" class="btn chaos" type="button">&#128165; ANIMAL CHAOS</button>
         <button id="bHow" class="btn alt small" type="button">HOW TO PLAY</button>
       </div>
       <p class="foot" id="titleFoot"></p>
@@ -122,6 +137,7 @@
         <li><b>Coins:</b> earn them from care, daily rewards, walks (pets dig up surprises!) and the 4 <b>mini games</b> at the Pet Park.</li>
         <li><b>Town:</b> Pet Shop (food, toys, accessories, furniture, eggs, adoption corner), Vet &amp; Groomer, Adoption Center, Pet Park and the Beach.</li>
         <li><b>Home:</b> tap DECOR to place furniture. Pets you leave home play there.</li>
+        <li><b>Animal Chaos:</b> be the pet! Knock things over, steal snacks and socks, leave muddy paw prints, confuse your owner and escape Animal Control. Play from the title screen, the &#9776; menu or the Pet Park (co-op with friends too).</li>
         <li><b>Friends:</b> host a town or join with a code. Visit, PLAYDATE, send gifts and play mini games together or against each other.</li>
       </ol>
       <button id="bHowBack" class="btn primary" type="button">GOT IT</button>
@@ -136,6 +152,7 @@
       <p class="sub" id="menuSub"></p>
       <div class="btncol">
         <button id="bResume" class="btn primary" type="button">RESUME</button>
+        <button id="bMenuChaos" class="btn chaos" type="button">&#128165; ANIMAL CHAOS</button>
         <button id="bMenuHow" class="btn" type="button">HOW TO PLAY</button>
         <button id="bSkipTut" class="btn alt" type="button">SKIP TUTORIAL</button>
         <button id="bQuit" class="btn alt" type="button">SAVE &amp; QUIT TO TITLE</button>
@@ -144,18 +161,19 @@
   </div>
   <div id="fade"></div>
 
-  <script src="three.min.js?v=12"></script>
-  <script src="peerjs.min.js?v=12"></script>
-  <script src="grok-net.js?v=12"></script>
-  <script src="js/data.js?v=12"></script>
-  <script src="js/models.js?v=12"></script>
-  <script src="js/world.js?v=12"></script>
-  <script src="js/audio.js?v=12"></script>
-  <script src="js/game.js?v=12"></script>
-  <script src="js/ui.js?v=12"></script>
-  <script src="js/care.js?v=12"></script>
-  <script src="js/minigames.js?v=12"></script>
-  <script src="js/npc.js?v=12"></script>
+  <script src="three.min.js?v=13"></script>
+  <script src="peerjs.min.js?v=13"></script>
+  <script src="grok-net.js?v=13"></script>
+  <script src="js/data.js?v=13"></script>
+  <script src="js/models.js?v=13"></script>
+  <script src="js/world.js?v=13"></script>
+  <script src="js/audio.js?v=13"></script>
+  <script src="js/game.js?v=13"></script>
+  <script src="js/ui.js?v=13"></script>
+  <script src="js/care.js?v=13"></script>
+  <script src="js/minigames.js?v=13"></script>
+  <script src="js/npc.js?v=13"></script>
+  <script src="js/chaos.js?v=13"></script>
   <script>GP.G.boot();</script>
 </body>
 </html>

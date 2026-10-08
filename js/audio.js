@@ -28,6 +28,10 @@ GP.Snd = (() => {
     s.connect(f); f.connect(g); g.connect(sfx); s.start(ctx.currentTime + (delay || 0));
   }
   const FX = {
+    crash() { noise(0.4, 0.16, 0, 500); tone(520, 0.12, 'triangle', 0.06, 0.02, null, 260); tone(880, 0.1, 'triangle', 0.04, 0.12, null, 600); },
+    siren() { for (let i = 0; i < 4; i++) { tone(660, 0.22, 'sine', 0.06, i * 0.45, null, 880); tone(880, 0.22, 'sine', 0.06, i * 0.45 + 0.22, null, 660); } },
+    slip() { tone(900, 0.45, 'sine', 0.08, 0, null, 180); noise(0.25, 0.08, 0.35, 400); },
+    whoosh() { noise(0.25, 0.08, 0, 2500); },
     click() { tone(880, 0.05, 'square', 0.04); },
     coin() { tone(mf(83), 0.08, 'square', 0.06); tone(mf(88), 0.16, 'square', 0.06, 0.07); },
     buy() { [76, 79, 84].forEach((m, i) => tone(mf(m), 0.12, 'triangle', 0.1, i * 0.07)); },
