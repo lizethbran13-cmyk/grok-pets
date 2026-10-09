@@ -24,6 +24,8 @@ let save = freshSave();
 try { const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (s && s.v === 1) save = Object.assign(freshSave(), s, { stats: Object.assign(freshSave().stats, s.stats || {}) }); } catch (e) { /* ignore */ }
 if (!save.name) { const gp = GN.savedProfile(); if (gp.hasName) { save.name = gp.name; save.color = gp.color; } }
 let saveT = 0;
+// One-time make-up gift for David (2026-10-09)
+if (!save.gift1009) { save.coins = Math.round((save.coins || 0) + 500); save.gift1009 = 1; setTimeout(() => { try { persist(); G.toast && G.toast('\uD83C\uDF81 Surprise! Gamer Grok sent you 500 bonus coins!'); Snd.fx('treasure'); } catch (e) { /* ignore */ } }, 3500); }
 function persist(now) { save.lastT = Date.now(); try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { /* ignore */ } saveT = now || performance.now(); }
 G.save = () => save; G.persist = persist;
 const prof = { name: save.name, color: GN.cleanColor(save.color) };
