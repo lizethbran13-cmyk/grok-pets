@@ -230,7 +230,7 @@ L.teaser = function () {
   let h = head('\uD83C\uDF19 Luna Pack') + '<div class="lunaPics">' + GP.LUNA_ORDER.map((k) => '<figure><img src="' + portrait(k) + '" alt=""><figcaption>' + esc(GP.SPECIES[k].name) + '</figcaption></figure>').join('') + '</div>';
   h += '<p class="sub">A moonlit new area, the <b>Moon Market</b> store, <b>5 new pets</b> (Chinchilla, Ferret, Guinea Pig, Sugar Glider, Fennec Fox), starry outfits, Moon Salon skins, cosmic snacks, toys and furniture, fireflies, a wishing pond and stargazing!</p>';
   if (can) h += '<div class="big">' + (guest ? '\uD83C\uDF89 Your host has the Luna Pack, so you can play it in this session!' : '\uD83C\uDF89 UNLOCKED!') + '</div><div class="btnrow"><button class="btn primary" data-a="luEnter">GO TO MOONLIGHT GROVE</button></div>';
-  else h += '<div class="big lunaLockMsg">\uD83D\uDD12 Unlock at the DLC Machine 3000 in Grok Arcade</div><div class="btnrow"><a class="btn primary" id="luArcade" href="' + ARCADE + '" target="_blank" rel="noopener">OPEN GROK ARCADE</a></div><p class="sub small">Expansion \u00b7 150 tickets. It turns on by itself the moment you unlock it.</p>';
+  else h += '<div class="big lunaLockMsg">\uD83D\uDD12 Unlock at the DLC Machine 3000 in Grok Arcade</div><div class="btnrow"><a class="btn primary" id="luArcade" href="' + ARCADE + '" target="_blank" rel="noopener">OPEN GROK ARCADE</a></div><p class="sub small">Expansion \u00b7 75 tickets. It turns on by itself the moment you unlock it.</p>';
   G.openPanel('luna_teaser', h);
 };
 function go(area, at) { G.closePanel(); G.travel(area, false, at); }
