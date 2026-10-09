@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>/* Grok Arcade Hall of Game Records: archived old version 1.0 of grok-pets. Saves are kept separate from the newest version. */
+(function(){var P='grokOldVersion.grok-pets.v1:';try{var S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;function L(t){try{return t===window.localStorage;}catch(e){return false;}}
+S.getItem=function(k){return g.call(this,L(this)?P+k:k);};S.setItem=function(k,v){return s.call(this,L(this)?P+k:k,v);};S.removeItem=function(k){return r.call(this,L(this)?P+k:k);};}catch(e){}
+window.GROK_OLD_VERSION={repo:'grok-pets',label:'v1',ver:'1.0',prefix:P};
+function badge(){try{var d=document.createElement('div');d.id='grokOldVerBadge';d.setAttribute('style','position:fixed;left:50%;top:6px;transform:translateX(-50%);z-index:2147483647;background:rgba(20,10,43,.92);color:#ffe14d;font:bold 12px/1.3 system-ui,sans-serif;padding:6px 12px;border-radius:14px;border:2px solid #ff4fd8;box-shadow:0 2px 10px rgba(0,0,0,.4);pointer-events:none;transition:opacity .8s;text-align:center;max-width:90vw');d.textContent='\uD83D\uDCFC OLD VERSION 1.0 \u00b7 from the Hall of Game Records \u00b7 separate save';document.body.appendChild(d);setTimeout(function(){d.style.opacity='0';},6000);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},7000);}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',badge);else badge();})();</script>
+<meta name="robots" content="noindex">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#ff6bd6" />
+  <title>GROK PETS</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff6bd6'/%3E%3Ccircle cx='32' cy='40' r='13' fill='%23fff'/%3E%3Ccircle cx='17' cy='24' r='7' fill='%23fff'/%3E%3Ccircle cx='27' cy='15' r='7' fill='%23fff'/%3E%3Ccircle cx='38' cy='15' r='7' fill='%23fff'/%3E%3Ccircle cx='48' cy='24' r='7' fill='%23fff'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="topbar">
+      <button id="coinPill" class="pill" type="button">&#x1FA99; <b id="coinN">0</b></button>
+      <div id="areaPill" class="pill">&#128205; <span id="areaN"></span></div>
+      <div id="roomPill" class="pill hidden">&#128225; <span id="roomN"></span></div>
+      <span class="grow"></span>
+      <button id="bMute" class="rbtn" type="button" aria-label="Sound">&#128266;</button>
+      <button id="bMenu" class="rbtn" type="button" aria-label="Menu">&#9776;</button>
+    </div>
+    <div id="petChips"></div>
+    <div id="mates"></div>
+    <div id="sidebtns">
+      <button id="bPets" class="sbtn" type="button"><i>&#128062;</i><span>PETS</span></button>
+      <button id="bBag" class="sbtn" type="button"><i>&#127890;</i><span>BAG</span></button>
+      <button id="bMap" class="sbtn" type="button"><i>&#128506;&#65039;</i><span>MAP</span></button>
+      <button id="bDecor" class="sbtn hidden" type="button"><i>&#128715;&#65039;</i><span>DECOR</span></button>
+      <button id="bPlaydate" class="sbtn pd hidden" type="button"><i>&#128158;</i><span>PLAYDATE</span></button>
+    </div>
+    <div id="prompt" class="hidden"></div>
+    <div id="joyzone"><div id="joybase"><div id="joyknob"></div></div><div id="joyhint">DRAG TO WALK<br><small>or tap a spot</small></div></div>
+    <button id="bCare" type="button"><i>&#10084;&#65039;</i><span>CARE</span></button>
+    <button id="bAct" type="button"><span id="actT">CARE</span></button>
+    <div id="kbdhelp">WASD walk &middot; E / Space act &middot; C care &middot; P pets &middot; B bag &middot; V map &middot; F decorate &middot; M mute</div>
+  </div>
+  <div id="decorBar" class="hidden"><div id="decorT"></div><div class="dbtns"><button id="dRot" class="btn small blue" type="button">&#8635; TURN</button><button id="dPlace" class="btn small green" type="button">PLACE</button><button id="dMove" class="btn small" type="button">MOVE</button><button id="dStore" class="btn small red" type="button">STORE</button><button id="dDone" class="btn small primary" type="button">DONE</button></div></div>
+  <div id="tut" class="hidden"></div>
+  <div id="toasts"></div>
+
+  <!-- up-close care mode -->
+  <div id="care" class="hidden">
+    <div id="careTouch"></div>
+    <div id="careTop">
+      <div id="careHead"><button id="careName" type="button"></button><div id="careSub"></div></div>
+      <button id="bCareX" class="xbig" type="button" aria-label="Close">&#10005;</button>
+    </div>
+    <div id="careMeters"></div>
+    <div id="careTool" class="hidden"><span id="careToolT"></span><button id="careToolDone" class="btn small primary" type="button">DONE</button></div>
+    <div id="careHint">Drag on your pet to pet &middot; Swipe the screen to do tricks</div>
+    <div id="careBtns"></div>
+    <div id="careCursor" class="hidden"></div>
+  </div>
+
+  <!-- mini game HUD -->
+  <div id="mgHud" class="hidden">
+    <div id="mgTouch"></div>
+    <div id="mgTop"><div id="mgTitle"></div><div id="mgScore"></div><div id="mgTime"></div><button id="mgQuit" class="rbtn" type="button" aria-label="Quit">&#10005;</button></div>
+    <div id="mgBoard"></div>
+    <div id="mgSub" class="hidden"></div>
+    <div id="mgMsg" class="hidden"></div>
+    <div id="mgBtns"></div>
+  </div>
+
+  <!-- title -->
+  <div id="scrTitle" class="screen">
+    <div class="card title">
+      <div class="logo"><span class="lg1">GROK</span><span class="lg2">PETS</span></div>
+      <div class="paws">&#128062;</div>
+      <div class="row prof">
+        <input id="nameIn" maxlength="12" placeholder="Your name" autocomplete="off" />
+        <div id="colorRow" class="swatches"></div>
+      </div>
+      <div class="btncol">
+        <button id="bSolo" class="btn primary" type="button">PLAY</button>
+        <button id="bOnline" class="btn blue" type="button">PLAY WITH FRIENDS</button>
+        <button id="bHow" class="btn alt small" type="button">HOW TO PLAY</button>
+      </div>
+      <p class="foot" id="titleFoot"></p>
+      <a id="arcadeLink" class="foot link" href="https://lizethbran13-cmyk.github.io/grok-arcade/">&larr; Grok Arcade</a>
+    </div>
+  </div>
+
+  <div id="scrOnline" class="screen hidden">
+    <div class="card">
+      <h2>PLAY WITH FRIENDS</h2>
+      <p class="sub">2&ndash;3 players, each on their own phone. Friends visit the host&rsquo;s town with their own pets!</p>
+      <button id="bHost" class="btn primary" type="button">HOST MY TOWN</button>
+      <div class="or">or join a friend&rsquo;s town</div>
+      <div class="row join">
+        <input id="codeIn" maxlength="5" placeholder="CODE" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+        <button id="bJoin" class="btn blue" type="button">JOIN</button>
+      </div>
+      <div id="onlineMsg" class="msg"></div>
+      <button id="bOnlineBack" class="btn alt small" type="button">BACK</button>
+    </div>
+  </div>
+
+  <div id="scrStarter" class="screen hidden">
+    <div class="card">
+      <h2>CHOOSE YOUR FIRST PET</h2>
+      <p class="sub">The others will join your family later as you play!</p>
+      <div id="starterList"></div>
+      <p class="sub" id="starterBlurb"></p>
+      <button id="bStarterGo" class="btn primary" type="button">START</button>
+    </div>
+  </div>
+
+  <div id="scrHow" class="screen hidden top">
+    <div class="card help">
+      <h2>HOW TO PLAY</h2>
+      <ol>
+        <li><b>Walk</b> with the joystick (or tap a spot). Your pets follow you!</li>
+        <li><b>Care:</b> tap your pet or &#10084;&#65039; CARE for a close-up. <b>Drag on your pet</b> to pet her. FEED, PLAY fetch, WASH, BRUSH, SLEEP, CALL and DRESS.</li>
+        <li><b>Tricks:</b> in care mode, swipe the screen: <b>down</b> = Sit, <b>up</b> = Jump, <b>circle</b> = Spin, <b>double-tap</b> = Wave, <b>sideways</b> = Roll Over. 3 good lessons and it&rsquo;s learned!</li>
+        <li><b>Needs</b> go down slowly. Pets get sad if you forget them, but never sick. Happy pets level up and grow from Baby to Adult.</li>
+        <li><b>Coins:</b> earn them from care, daily rewards, walks (pets dig up surprises!) and the 4 <b>mini games</b> at the Pet Park.</li>
+        <li><b>Town:</b> Pet Shop (food, toys, accessories, furniture, eggs, adoption corner), Vet &amp; Groomer, Adoption Center, Pet Park and the Beach.</li>
+        <li><b>Home:</b> tap DECOR to place furniture. Pets you leave home play there.</li>
+        <li><b>Friends:</b> host a town or join with a code. Visit, PLAYDATE, send gifts and play mini games together or against each other.</li>
+      </ol>
+      <button id="bHowBack" class="btn primary" type="button">GOT IT</button>
+    </div>
+  </div>
+
+  <div id="pnl" class="screen hidden"><div class="card" id="pnlCard"></div></div>
+
+  <div id="scrMenu" class="screen hidden top">
+    <div class="card">
+      <h2>PAUSED</h2>
+      <p class="sub" id="menuSub"></p>
+      <div class="btncol">
+        <button id="bResume" class="btn primary" type="button">RESUME</button>
+        <button id="bMenuHow" class="btn" type="button">HOW TO PLAY</button>
+        <button id="bSkipTut" class="btn alt" type="button">SKIP TUTORIAL</button>
+        <button id="bQuit" class="btn alt" type="button">SAVE &amp; QUIT TO TITLE</button>
+      </div>
+    </div>
+  </div>
+  <div id="fade"></div>
+
+  <script src="three.min.js"></script>
+  <script src="peerjs.min.js"></script>
+  <script src="grok-net.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/models.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/care.js"></script>
+  <script src="js/minigames.js"></script>
+  <script>GP.G.boot();</script>
+</body>
+</html>
