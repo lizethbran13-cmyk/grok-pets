@@ -278,7 +278,7 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-a]'); if (!b || b.disabled) return; Snd.init(); Snd.fx('click');
   const a = b.dataset.a, v = b.dataset.v, s = sv();
   switch (a) {
-    case 'close': G.closePanel(); break;
+    case 'close': if (GS.mg && (GS.panel === 'mgres' || GS.panel === 'mgwait')) G.mgExit(); else G.closePanel(); break; // X on mini game results/wait = leave, never strand the player in the arena
     case 'care': G.closePanel(); if (GS.care && GS.care.id !== +v) GP.Care.close(true); if (!GS.care) GP.Care.open(+v); break;
     case 'starter': starterSel = v; UI._starterDraw(); break;
     case 'petsTab': UI.pets(v); break;

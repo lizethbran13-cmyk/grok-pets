@@ -477,7 +477,7 @@ G.mgFinished = function (id, score, extra) {
   save.stats.games++; if (id === 'show') { save.stats.shows++; if (extra && extra.ribbon === 'Gold') save.stats.gold++; }
   const best = save.best[id] || 0, isBest = score > best; if (isBest) save.best[id] = score; persist();
   m.reward = { coins, isBest, extra: extra || {} };
-  if (m.solo || !G.online()) showMgResult(); else { m.wait = true; renderWait(); }
+  if (m.solo || !G.online()) showMgResult(); else { m.wait = true; GS.waitT = 0.5; renderWait(); }
 };
 function showMgResult(online) {
   const m = GS.mg, gm = GP.gameById(m.id), r = m.reward; let html = head(gm.icon + ' ' + gm.name);
@@ -491,12 +491,14 @@ function showMgResult(online) {
 }
 function renderWait() {
   const m = GS.mg; if (!m || !m.wait) return; const S = S_(); if (!S || !S.mg || S.mg.gid !== m.gid) { m.wait = false; showMgResult(); return; }
+  // the round may already be over (the 'mgover' event can arrive while our own FINISH! banner is still showing) -> show results now
+  if (S.mg.phase !== 'play') { G.mgOnlineResult(); return; }
   const rows = S.mg.players.map((q) => { const pl = S.players.find((x) => x.pid === q); return '<div class="lrow"><b>' + esc(S.mg.names[q] || 'Friend') + '</b><span>' + (S.mg.scores[q] || 0) + (S.mg.done[q] ? ' \u2714' : pl ? ' \u2026playing' : ' (left)') + '</span></div>'; }).join('');
-  openPanel('mgwait', head('\u23F3 Waiting for friends') + '<p class="sub">You scored <b>' + m.score + '</b>! Let\u2019s see how your friends do\u2026</p><div class="lboard">' + rows + '</div>');
+  openPanel('mgwait', head('\u23F3 Waiting for friends') + '<p class="sub">You scored <b>' + m.score + '</b>! Let\u2019s see how your friends do\u2026</p><div class="lboard">' + rows + '</div><div class="btnrow"><button class="btn" data-a="mgdone">LEAVE (KEEP COINS)</button></div>');
 }
 G.mgOnlineResult = function () {
-  const m = GS.mg, S = S_(); if (!m || !S || !S.mg || S.mg.gid !== m.gid || !m.finished) return;
-  m.wait = false; const res = S.mg.res; let extra = '';
+  const m = GS.mg, S = S_(); if (!m || !S || !S.mg || S.mg.gid !== m.gid || !m.finished || m.resShown) return;
+  m.wait = false; m.resShown = true; const res = S.mg.res; let extra = '';
   if (res) {
     const rows = res.rank.map((x, i) => '<div class="lrow' + (x.pid === GS.pid ? ' me' : '') + '"><b>' + (i + 1) + '. ' + esc(S.mg.names[x.pid] || 'Friend') + '</b><span>' + x.s + '</span></div>').join('');
     if (S.mg.mode === 'vs') { const won = res.win.indexOf(GS.pid) >= 0; extra = '<h3>' + (won ? '\uD83E\uDD47 You won! +30 bonus coins' : '\uD83D\uDC4F Nice try!') + '</h3><div class="lboard">' + rows + '</div>'; if (won) G.addCoins(30); }
