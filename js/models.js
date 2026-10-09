@@ -110,7 +110,7 @@ function quad(P, o) {
       case 'cat': { const e = mesh(G.cone4, ec, eg, 0, hr * 0.22, 0, hr * 0.36, hr * 0.55, hr * 0.2); e.rotation.z = s * -0.3; mesh(G.cone4, '#f9a8b8', eg, 0, hr * 0.2, hr * 0.06, hr * 0.2, hr * 0.38, hr * 0.1).rotation.z = s * -0.3; break; }
       case 'round': { const e = mesh(G.cyl, o.earCol || '#f3c1c6', eg, 0, hr * 0.12, 0, hr * (o.earR || 0.38), 0.03, hr * (o.earR || 0.38)); e.rotation.x = Math.PI / 2; mesh(G.cyl, c1, eg, 0, hr * 0.12, -0.012, hr * (o.earR || 0.38) * 1.12, 0.025, hr * (o.earR || 0.38) * 1.12).rotation.x = Math.PI / 2; break; }
       case 'bunny': { eg.position.x = s * hr * 0.3; eg.position.y = hr * 0.75; const e = ell(hr * 0.2, hr * 0.85, hr * 0.12, c1, eg, 0, hr * 0.7, 0); e.rotation.z = s * -0.15; const i2 = ell(hr * 0.11, hr * 0.68, hr * 0.06, '#ffc6d3', eg, 0, hr * 0.7, hr * 0.07); i2.rotation.z = s * -0.15; break; }
-      case 'fennec': { const e = cone(hr * 0.36, hr * 1.25, ec, eg, s * hr * 0.12, hr * 0.5, -hr * 0.05); e.rotation.z = s * -0.42; const i2 = cone(hr * 0.22, hr * 0.95, '#f9b8c4', eg, s * hr * 0.13, hr * 0.48, hr * 0.06); i2.rotation.z = s * -0.42; i2.scale.z = 0.35; break; }
+      case 'fennec': { const e = cone(hr * 0.4, hr * 1.45, ec, eg, s * hr * 0.1, hr * 0.5, 0); e.rotation.z = s * -0.32; e.rotation.x = -0.12; const i2 = cone(hr * 0.27, hr * 1.1, '#f9b8c4', eg, s * hr * 0.09, hr * 0.45, hr * 0.12); i2.rotation.z = s * -0.32; i2.rotation.x = -0.12; i2.scale.z = hr * 0.12; break; }
       case 'petal': { const e = ell(hr * 0.28, hr * 0.12, hr * 0.24, o.earCol || shade(c1, -0.15), eg, s * hr * 0.18, -hr * 0.05, 0); e.rotation.z = s * 0.7; break; }
       case 'horn': { const e = cone(hr * 0.13, hr * 0.6, o.hornCol || '#fde68a', eg, 0, hr * 0.25, -hr * 0.1); e.rotation.x = -0.5; break; }
       case 'pony': { const e = cone(hr * 0.2, hr * 0.5, c1, eg, 0, hr * 0.15, -hr * 0.2); e.rotation.z = s * -0.2; break; }
@@ -131,7 +131,7 @@ function quad(P, o) {
     case 'puff': sph(0.09, o.puffCol || '#ffffff', tg, 0, 0.0, -0.03); break;
     case 'dragon': { const t = cone(0.1, 0.6, c1, tg, 0, 0.0, -0.28); t.rotation.x = -Math.PI / 2 + 0.3; const tip = mesh(G.cone4, c2, tg, 0, 0.07, -0.58, 0.1, 0.16, 0.04); tip.rotation.x = -Math.PI / 2; break; }
     case 'mane': for (let i = 0; i < 3; i++) { const t = ell(0.06, 0.24, 0.06, o.maneCol || c2, tg, (i - 1) * 0.04, -0.08, -0.1); t.rotation.x = -0.4; } break;
-    case 'bushy': for (let i = 0; i < 4; i++) { const t = ell(0.07 + i * 0.012, 0.09 + i * 0.01, 0.08, i === 3 && o.tailTip ? o.tailTip : c1, tg, 0, 0.04 + i * 0.09, -0.06 - Math.sin(i * 0.7) * 0.14); t.rotation.x = -0.6 + i * 0.35; } break;
+    case 'bushy': { const c = o.tailTip || c1; [[0.07, 0.11, -0.08, -0.9], [0.085, 0.13, 0.08, -0.25], [0.08, 0.12, 0.22, 0.45]].forEach((q, i) => { const t = ell(q[0], q[1], q[0] * 1.1, i === 2 ? c : c1, tg, 0, q[2] + 0.04, -0.1 - i * 0.05 + (i === 2 ? 0.05 : 0)); t.rotation.x = q[3]; }); break; }
     case 'fox': { const t = ell(0.09, 0.09, 0.26, c1, tg, 0, 0.02, -0.2); t.rotation.x = 0.35; const tip = ell(0.07, 0.07, 0.1, o.tailTip || '#ffffff', tg, 0, -0.06, -0.42); tip.rotation.x = 0.35; break; }
     case 'ferret': { const t = ell(0.045, 0.045, 0.24, o.tailCol || c1, tg, 0, -0.03, -0.2); t.rotation.x = 0.25; break; }
     case 'robot': { const t = cyl(0.03, 0.3, '#64748b', tg, 0, 0.12, -0.05); t.rotation.x = -0.6; sph(0.05, M(c2, { emissive: c2 }), tg, 0, 0.25, -0.13); break; }

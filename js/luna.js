@@ -121,7 +121,7 @@ function buildGrove() {
   const gr = new T.Mesh(GEO.plane, M('#35507e')); gr.rotation.x = -Math.PI / 2; gr.scale.set(200, 200, 1); g.add(gr); A.ground.push(gr);
   Lb.rect(A, -22, 22, -20, 18);
   // moonstone paths
-  Lb.ground(A, 3.2, 30, '#c7d2fe', 0, 2, 0.03); Lb.ground(A, 26, 3, '#c7d2fe', 0, -4, 0.032);
+  Lb.ground(A, 3.2, 30, '#7f86c4', 0, 2, 0.03); Lb.ground(A, 26, 3, '#7f86c4', 0, -4, 0.032);
   for (let i = 0; i < 18; i++) sph(0.08, glow('#e0e7ff', '#6366f1'), g, (i % 2 ? 1.75 : -1.75), 0.05, -12 + i * 1.7);
   // sky: moon + stars
   const moon = grp(g, 18, 26, -70); sph(9, M('#fef9c3', { emissive: '#fde68a', fog: false }), moon, 0, 0, 0); [[2, 3, 1.4], [-3, -2, 1.8], [3.5, -3, 1]].forEach((q) => sph(q[2], M('#f5e7a1', { emissive: '#d9c36a', fog: false }), moon, q[0], q[1], 8.1));
