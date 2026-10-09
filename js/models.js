@@ -55,6 +55,11 @@ function quad(P, o) {
   }
   if (o.stripes) for (let i = 0; i < 4; i++) box(Wd * 0.86, 0.035, 0.05, o.stripeCol || '#00000033', body, 0, cy + H * 0.47, -L * 0.28 + i * L * 0.17).scale.y = 0.02;
   if (o.spikes) { for (let i = 0; i < 26; i++) { const a = (i % 7) / 7 * Math.PI - Math.PI / 2, b = Math.floor(i / 7) / 4; const sx = Math.sin(a) * Wd * 0.48, sy = cy + Math.cos(a) * H * 0.5, sz = L * (0.3 - b * 0.6); const sp = cone(0.045, 0.16, o.spikeCol || '#5a3d26', body, sx, sy, sz); sp.rotation.set(-0.9, 0, -a * 0.9); } }
+  // Luna Pack details: extra fluff, back stripe, rosette tufts, gliding membranes
+  if (o.fluff) { for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; ell(Wd * 0.2, H * 0.22, L * 0.2, i % 2 ? c1 : shade(c1, 0.12), body, Math.cos(a) * Wd * 0.38, cy + Math.sin(a) * H * 0.28 + H * 0.06, (i % 3 - 1) * L * 0.26); } }
+  if (o.backStripe) { const bs = ell(Wd * 0.09, H * 0.08, L * 0.48, o.stripeC || '#2f2a33', body, 0, cy + H * 0.47, 0); bs.rotation.x = 0.02; }
+  if (o.rosette) { [[0.12, -0.18], [-0.14, 0.05], [0.1, 0.22]].forEach((q) => { for (let i = 0; i < 5; i++) { const a = i / 5 * TAU; const t = cone(Wd * 0.09, H * 0.2, o.rosCol || c2, body, q[0] * Wd * 2 + Math.cos(a) * Wd * 0.08, cy + H * 0.46, q[1] * L * 1.6 + Math.sin(a) * Wd * 0.08); t.rotation.set(Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9); } }); }
+  if (o.glider) { P.glide = []; [-1, 1].forEach((s) => { const gg = grp(body, s * Wd * 0.4, cy - H * 0.06, 0); const m = ell(Wd * 0.42, 0.022, L * 0.36, o.c1, gg, s * Wd * 0.3, 0, 0); m.rotation.z = s * 0.12; ell(Wd * 0.4, 0.024, L * 0.06, shade(o.c1, -0.3), gg, s * Wd * 0.33, 0.004, L * 0.32); P.glide.push(gg); }); }
   // legs
   P.legs = [];
   const lw = o.legW || Math.max(0.05, Wd * 0.2), lz = L * (o.legZ || 0.32), lx = Wd * 0.3;
@@ -90,6 +95,9 @@ function quad(P, o) {
     box(hr * 0.8, hr * 0.07, hr * 0.12, shade(c1, -0.25), head, 0, hr * 0.42, hr * 0.78);
   }
   if (o.cheeks) [-1, 1].forEach((s) => ell(hr * 0.35, hr * 0.3, hr * 0.3, o.cheekCol || c2, head, s * hr * 0.62, -hr * 0.3, hr * 0.4));
+  if (o.whiskers) [-1, 1].forEach((s) => { for (let i = 0; i < 2; i++) { const w = cyl(0.004, hr * 0.9, '#ffffff', head, s * hr * 0.42, -hr * 0.2 + i * 0.03, hr * 0.85); w.rotation.z = Math.PI / 2 + s * (0.12 - i * 0.2); w.rotation.y = s * 0.3; } });
+  if (o.bandit) { [-1, 1].forEach((s) => { const b = ell(hr * 0.3, hr * 0.17, hr * 0.12, o.bandit, head, s * hr * 0.4, hr * 0.12, hr * 0.74); b.rotation.z = s * -0.2; }); }
+  if (o.bigEyes) P.eyes.forEach((e) => e.g.scale.setScalar(1.35));
   // ears
   const ec = o.points ? c2 : (o.earCol || c1);
   P.ears = [];
@@ -102,6 +110,8 @@ function quad(P, o) {
       case 'cat': { const e = mesh(G.cone4, ec, eg, 0, hr * 0.22, 0, hr * 0.36, hr * 0.55, hr * 0.2); e.rotation.z = s * -0.3; mesh(G.cone4, '#f9a8b8', eg, 0, hr * 0.2, hr * 0.06, hr * 0.2, hr * 0.38, hr * 0.1).rotation.z = s * -0.3; break; }
       case 'round': { const e = mesh(G.cyl, o.earCol || '#f3c1c6', eg, 0, hr * 0.12, 0, hr * (o.earR || 0.38), 0.03, hr * (o.earR || 0.38)); e.rotation.x = Math.PI / 2; mesh(G.cyl, c1, eg, 0, hr * 0.12, -0.012, hr * (o.earR || 0.38) * 1.12, 0.025, hr * (o.earR || 0.38) * 1.12).rotation.x = Math.PI / 2; break; }
       case 'bunny': { eg.position.x = s * hr * 0.3; eg.position.y = hr * 0.75; const e = ell(hr * 0.2, hr * 0.85, hr * 0.12, c1, eg, 0, hr * 0.7, 0); e.rotation.z = s * -0.15; const i2 = ell(hr * 0.11, hr * 0.68, hr * 0.06, '#ffc6d3', eg, 0, hr * 0.7, hr * 0.07); i2.rotation.z = s * -0.15; break; }
+      case 'fennec': { const e = cone(hr * 0.36, hr * 1.25, ec, eg, s * hr * 0.12, hr * 0.5, -hr * 0.05); e.rotation.z = s * -0.42; const i2 = cone(hr * 0.22, hr * 0.95, '#f9b8c4', eg, s * hr * 0.13, hr * 0.48, hr * 0.06); i2.rotation.z = s * -0.42; i2.scale.z = 0.35; break; }
+      case 'petal': { const e = ell(hr * 0.28, hr * 0.12, hr * 0.24, o.earCol || shade(c1, -0.15), eg, s * hr * 0.18, -hr * 0.05, 0); e.rotation.z = s * 0.7; break; }
       case 'horn': { const e = cone(hr * 0.13, hr * 0.6, o.hornCol || '#fde68a', eg, 0, hr * 0.25, -hr * 0.1); e.rotation.x = -0.5; break; }
       case 'pony': { const e = cone(hr * 0.2, hr * 0.5, c1, eg, 0, hr * 0.15, -hr * 0.2); e.rotation.z = s * -0.2; break; }
       case 'antenna': if (s > 0) { cyl(0.012, hr * 0.8, '#64748b', eg, 0, hr * 0.4, 0); sph(hr * 0.12, M(c2, { emissive: c2 }), eg, 0, hr * 0.85, 0); } else { const e = box(hr * 0.3, hr * 0.3, hr * 0.12, c1, eg, 0, hr * 0.1, 0); e.rotation.z = 0.2; } break;
@@ -121,6 +131,9 @@ function quad(P, o) {
     case 'puff': sph(0.09, o.puffCol || '#ffffff', tg, 0, 0.0, -0.03); break;
     case 'dragon': { const t = cone(0.1, 0.6, c1, tg, 0, 0.0, -0.28); t.rotation.x = -Math.PI / 2 + 0.3; const tip = mesh(G.cone4, c2, tg, 0, 0.07, -0.58, 0.1, 0.16, 0.04); tip.rotation.x = -Math.PI / 2; break; }
     case 'mane': for (let i = 0; i < 3; i++) { const t = ell(0.06, 0.24, 0.06, o.maneCol || c2, tg, (i - 1) * 0.04, -0.08, -0.1); t.rotation.x = -0.4; } break;
+    case 'bushy': for (let i = 0; i < 4; i++) { const t = ell(0.07 + i * 0.012, 0.09 + i * 0.01, 0.08, i === 3 && o.tailTip ? o.tailTip : c1, tg, 0, 0.04 + i * 0.09, -0.06 - Math.sin(i * 0.7) * 0.14); t.rotation.x = -0.6 + i * 0.35; } break;
+    case 'fox': { const t = ell(0.09, 0.09, 0.26, c1, tg, 0, 0.02, -0.2); t.rotation.x = 0.35; const tip = ell(0.07, 0.07, 0.1, o.tailTip || '#ffffff', tg, 0, -0.06, -0.42); tip.rotation.x = 0.35; break; }
+    case 'ferret': { const t = ell(0.045, 0.045, 0.24, o.tailCol || c1, tg, 0, -0.03, -0.2); t.rotation.x = 0.25; break; }
     case 'robot': { const t = cyl(0.03, 0.3, '#64748b', tg, 0, 0.12, -0.05); t.rotation.x = -0.6; sph(0.05, M(c2, { emissive: c2 }), tg, 0, 0.25, -0.13); break; }
     default: break;
   }
@@ -135,7 +148,7 @@ function quad(P, o) {
   P.att.face.position.set(0, hr * 0.15, hr * 0.92); head.add(P.att.face);
   P.att.neck.position.set(0, hy - hr * 0.75, hz - hr * 0.35); body.add(P.att.neck); P.neckR = Math.max(Wd * 0.36, hr * 0.62);
   if (o.neckUp) { P.att.neck.position.set(0, (cy + hy) / 2 + 0.06, L * 0.42 + hr * 0.25); P.att.neck.rotation.x = 0.5; P.neckR = hr * 0.6; }
-  P.legH = lh; P.hop = !!o.hop;
+  P.legH = lh; P.hop = !!o.hop; P.slink = !!o.slink; P.waddle = !!o.waddle; P.earWiggle = !!o.earWiggle;
 }
 
 function bird(P, o) {
@@ -190,6 +203,11 @@ const KIND = {
   tortoise: (o) => Object.assign({ len: 0.6, bh: 0.3, bw: 0.48, legH: 0.12, legW: 0.11, headR: 0.13, ears: 'none', tail: 'none', snout: 0.04, shell: 1, legCol: '#9a8a5a', eyeR: 0.24, legZ: 0.3 }, o),
   dragon: (o) => Object.assign({ len: 0.62, bh: 0.34, bw: 0.32, legH: 0.24, headR: 0.22, ears: 'horn', tail: 'dragon', snout: 0.18, wings: 1, nose: '#7f1d1d', hornCol: '#fef3c7' }, o),
   pony: (o) => Object.assign({ len: 0.72, bh: 0.38, bw: 0.32, legH: 0.48, legW: 0.08, headR: 0.2, ears: 'pony', tail: 'mane', snout: 0.22, neckUp: 1, mane: 1, uniHorn: 1, headSz: 1.1 }, o),
+  chinchilla: (o) => Object.assign({ len: 0.44, bh: 0.38, bw: 0.38, legH: 0.06, legW: 0.07, headR: 0.2, ears: 'round', earR: 0.56, earCol: '#f6c7cf', tail: 'bushy', snout: 0.05, nose: '#f39cab', cheeks: 1, hop: 1, fluff: 1, whiskers: 1, eyeR: 0.22, tailUp: 0.1, earWiggle: 1 }, o),
+  ferret: (o) => Object.assign({ len: 0.78, bh: 0.2, bw: 0.21, legH: 0.08, legW: 0.07, headR: 0.15, ears: 'round', earR: 0.3, tail: 'ferret', snout: 0.1, pointy: 1, nose: '#e88b99', whiskers: 1, slink: 1, tailUp: 0.05, legZ: 0.36 }, o),
+  guineapig: (o) => Object.assign({ len: 0.5, bh: 0.32, bw: 0.36, legH: 0.04, legW: 0.07, headR: 0.2, ears: 'petal', tail: 'none', snout: 0.04, nose: '#c46a7a', rosette: 1, cheeks: 1, eyeR: 0.2, waddle: 1, headSz: 1.05 }, o),
+  glider: (o) => Object.assign({ len: 0.4, bh: 0.24, bw: 0.26, legH: 0.07, legW: 0.05, headR: 0.17, ears: 'round', earR: 0.42, earCol: '#f3c1c6', tail: 'bushy', snout: 0.06, pointy: 1, nose: '#f39cab', glider: 1, backStripe: 1, bigEyes: 1, eyeR: 0.26, hop: 1, whiskers: 1, earWiggle: 1, tailUp: 0.0 }, o),
+  fennec: (o) => Object.assign({ len: 0.5, bh: 0.26, bw: 0.25, legH: 0.2, legW: 0.06, headR: 0.18, ears: 'fennec', tail: 'fox', snout: 0.14, pointy: 1, nose: '#2a1a1a', earWiggle: 1, tailUp: 0.1, eyeR: 0.22 }, o),
   robodog: (o) => Object.assign({ len: 0.6, bh: 0.3, bw: 0.3, legH: 0.26, headR: 0.2, ears: 'antenna', tail: 'robot', snout: 0.0, robot: 1, legCol: '#64748b', pawCol: '#475569' }, o)
 };
 
@@ -301,6 +319,10 @@ function animPet(P, dt, sp) {
   if (P.tail) P.tail.rotation.y = wag;
   if (P.wings) P.wings.forEach((w, i) => { w.rotation.z = (i ? -1 : 1) * (wingA ? Math.sin(P.actT * 30) * 0.7 * wingA : moving ? Math.sin(P.ph * 2) * 0.12 : 0); });
   if (P.isFish && P.fishG) { const t = P.ph * 0.6; P.fishG.position.set(Math.sin(t) * 0.12, 0.52 + (P.act === 'jump' || P.act === 'catch' ? 0 : Math.sin(t * 2) * 0.02), Math.cos(t) * 0.08); P.fishG.rotation.y = t + Math.PI / 2 + (P.act ? 0 : 0); if (P.tail) P.tail.rotation.y = Math.sin(P.ph * 8) * 0.5; }
+  if (P.slink && P.body) { P.body.rotation.y = moving ? Math.sin(P.ph * 2) * 0.1 : 0; if (moving) rig.position.y += Math.abs(Math.sin(P.ph)) * 0.05; }
+  if (P.waddle) rig.rotation.z += moving ? Math.sin(P.ph) * 0.09 : 0;
+  if (P.earWiggle && P.ears) P.ears.forEach((e, i) => { e.rotation.z = Math.sin(P.ph * (moving ? 1.3 : 0.9) + i * 1.7) * 0.07 + (wingA ? (i ? -1 : 1) * 0.25 * wingA : 0); });
+  if (P.glide) P.glide.forEach((g, i) => { const spread = Math.max(wingA, P.act === 'jump' || P.act === 'catch' ? 1 : 0); g.scale.x = 0.55 + spread * 0.7; g.rotation.z = (i ? -1 : 1) * (spread ? Math.sin(P.actT * 18) * 0.12 : moving ? Math.sin(P.ph * 2) * 0.05 : 0); });
   P.blink -= dt; const bl = P.blink < 0.12;
   if (P.blink < 0) P.blink = 2 + Math.random() * 4;
   P.eyes && P.eyes.forEach((e) => { if (!e.closed) e.g.scale.y = eyesClosed ? 0.12 : bl ? 0.15 : 1; });

@@ -137,7 +137,7 @@ function ctx() {
 function fill(t, c) { return String(t).replace(/\{pet\}/g, c.pet); }
 function petComment(c) {
   const p = c.p; if (!p) return 'No pet with you today? Pick one in PETS and bring them along!';
-  const m = G.mood(p), kind = { dog: 'pup', cat: 'kitty', rat: 'rat', bird: 'bird', fish: 'fish', bunny: 'bunny', hamster: 'hamster', tortoise: 'tortoise', hedgehog: 'hedgehog', robodog: 'robot pup', dragon: 'dragon', pony: 'pony' }[c.sp.kind] || 'pet';
+  const m = G.mood(p), kind = { dog: 'pup', cat: 'kitty', rat: 'rat', bird: 'bird', fish: 'fish', bunny: 'bunny', hamster: 'hamster', tortoise: 'tortoise', hedgehog: 'hedgehog', robodog: 'robot pup', dragon: 'dragon', pony: 'pony', chinchilla: 'chinchilla', ferret: 'ferret', guineapig: 'guinea pig', glider: 'sugar glider', fennec: 'fox' }[c.sp.kind] || 'pet';
   if (p.n.h < 35) return 'I think I hear ' + p.name + '\u2019s tummy rumbling. Snack time?';
   if (p.n.c < 35) return p.name + ' could use a bubble bath. Sudsy Sam at the Vet & Groomer can help!';
   if (p.n.e < 28) return p.name + ' looks sleepy. A nap at home would help.';
@@ -160,7 +160,7 @@ NPC.init = function () {
   DEFS.forEach((d, i) => {
     const A = W.areas[d.area]; const n = { def: d, i, area: d.area, yaw: 0, sp: 0, spd: 0, wait: 0, talk: false, pd: false, wave: 0, blockT: 0, stuckT: 0, gi: 0, ti: i * 3 };
     if (d.staff) {
-      const s = statics[d.id]; n.ch = s[0]; n.x = s[1]; n.z = s[2]; n.yaw = n.baseYaw = s[3]; n.reach = d.id === 'kiki' ? 2.9 : 2.7;
+      const s = statics[d.id] || d.place(); n.ch = s[0]; n.x = s[1]; n.z = s[2]; n.yaw = n.baseYaw = s[3]; n.reach = d.id === 'kiki' ? 2.9 : 2.7;
     } else {
       n.ch = MD.person(d.model); A.g.add(n.ch.g); n.reach = 2.4;
       n.wi = (d.start + 1) % d.route.length; n.dir = 1; const p0 = d.route[d.start]; n.x = p0[0]; n.z = p0[1];
@@ -373,7 +373,7 @@ function tips(n) {
 }
 function browse(n) {
   const id = n.def.id; NPC.close();
-  if (id === 'penny') G.UI.shop('food'); else if (id === 'pawla') G.UI.vet('vet'); else if (id === 'sam') G.UI.vet('groom'); else if (id === 'hazel') G.UI.adopt(null); else if (id === 'kiki') G.UI.games(false);
+  if (id === 'penny') G.UI.shop('food'); else if (id === 'pawla') G.UI.vet('vet'); else if (id === 'sam') G.UI.vet('groom'); else if (id === 'hazel') G.UI.adopt(null); else if (id === 'kiki') G.UI.games(false); else if (n.def.browse) n.def.browse();
 }
 function quest(n) {
   const d = n.def, s = st(d.id), Q = QUESTS[d.quest], c = ctx(), t0 = today();

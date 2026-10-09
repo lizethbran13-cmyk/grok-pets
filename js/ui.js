@@ -69,9 +69,9 @@ UI.pets = function (tab) {
         '<div class="pbtns"><button class="btn small green" data-a="care" data-v="' + p.id + '">CARE</button><button class="btn small ' + (act ? 'alt' : 'blue') + '" data-a="walk" data-v="' + p.id + '">' + (act ? 'HOME' : 'WALK') + '</button><button class="btn small" data-a="info" data-v="' + p.id + '">INFO</button></div></div>';
     }).join('');
   } else {
-    const owned = {}; s.pets.forEach((p) => { owned[p.sp] = 1; });
-    h += '<p class="sub">Discovered <b>' + Object.keys(owned).length + '/' + GP.SPECIES_ORDER.length + '</b> kinds of pets</p><div class="book">';
-    h += GP.SPECIES_ORDER.map((k) => { const sp = GP.SPECIES[k], have = owned[k]; return '<div class="bcard' + (have ? '' : ' locked') + '">' + img(spLook(k, 0), 'pic' + (have ? '' : ' sil')) + '<b>' + (have || s.seen[k] ? esc(sp.name) : '???') + '</b>' + rb(sp.r) + '<small>' + (sp.egg ? 'From eggs' : 'Adopt: ' + sp.price + ' \uD83E\uDE99') + '</small></div>'; }).join('');
+    const owned = {}; s.pets.forEach((p) => { owned[p.sp] = 1; }); const ORDER = GP.SPECIES_ORDER.concat(GP.LUNA_ORDER || []);
+    h += '<p class="sub">Discovered <b>' + Object.keys(owned).length + '/' + ORDER.length + '</b> kinds of pets</p><div class="book">';
+    h += ORDER.map((k) => { const sp = GP.SPECIES[k], have = owned[k]; return '<div class="bcard' + (have ? '' : ' locked') + '">' + img(spLook(k, 0), 'pic' + (have ? '' : ' sil')) + '<b>' + (have || s.seen[k] ? esc(sp.name) : '???') + '</b>' + rb(sp.r) + '<small>' + (sp.dlc ? '\uD83C\uDF19 Luna Pack \u00b7 Moonlight Grove' : sp.egg ? 'From eggs' : 'Adopt: ' + sp.price + ' \uD83E\uDE99') + '</small></div>'; }).join('');
     h += '</div><h3>\u2665 Family</h3><div class="book">' + GP.FAMILY.map((f) => { const have = s.pets.some((p) => p.fam === f.id), r = f.test(s); return '<div class="bcard' + (have ? '' : ' locked') + '">' + img(famLook(f), 'pic' + (have ? '' : ' sil')) + '<b>' + esc(f.name) + '</b>' + rb('family') + '<small>' + (have ? 'In your family!' : esc(f.goal) + ' (' + Math.min(r[0], r[1]) + '/' + r[1] + ')') + '</small></div>'; }).join('') + '</div>';
   }
   G.openPanel('pets', h);
@@ -121,17 +121,18 @@ UI.bag = function (tab) {
 };
 
 /* ---------------- map ---------------- */
-const DEST = [['home', '\uD83C\uDFE0', 'Your Home', 'home', null], ['yard', '\uD83C\uDF33', 'Your Yard', 'town', [3, -26]], ['plaza', '\u26F2', 'Town Plaza', 'town', [0, -7]], ['shop', '\uD83D\uDECD\uFE0F', 'Pet Shop', 'shop', null], ['vet', '\uD83E\uDE7A', 'Vet & Groomer', 'vet', null], ['adopt', '\uD83D\uDC3E', 'Adoption Center', 'adopt', null], ['park', '\uD83C\uDFAE', 'Pet Park', 'town', [30, -4]], ['beach', '\uD83C\uDFD6\uFE0F', 'Beach', 'town', [64, 0]]];
+const DEST = [['home', '\uD83C\uDFE0', 'Your Home', 'home', null], ['yard', '\uD83C\uDF33', 'Your Yard', 'town', [3, -26]], ['plaza', '\u26F2', 'Town Plaza', 'town', [0, -7]], ['shop', '\uD83D\uDECD\uFE0F', 'Pet Shop', 'shop', null], ['vet', '\uD83E\uDE7A', 'Vet & Groomer', 'vet', null], ['adopt', '\uD83D\uDC3E', 'Adoption Center', 'adopt', null], ['park', '\uD83C\uDFAE', 'Pet Park', 'town', [30, -4]], ['beach', '\uD83C\uDFD6\uFE0F', 'Beach', 'town', [64, 0]], ['luna', '\uD83C\uDF19', 'Moonlight Grove', 'luna', null]];
+UI.DEST = DEST;
 UI.map = function () {
   const open = !W.gateObs.off ? false : true;
-  G.openPanel('map', head('\uD83D\uDDFA\uFE0F Go to\u2026') + DEST.map((d) => { const lock = d[0] === 'beach' && !open; return '<button class="areaBtn" data-a="goto" data-v="' + d[0] + '"' + (lock ? ' disabled' : '') + '><span class="ai">' + d[1] + '</span><span><b>' + d[2] + '</b><small>' + (lock ? 'Unlock with a Beach Pass at the park gate' : '') + '</small></span></button>'; }).join(''));
+  G.openPanel('map', head('\uD83D\uDDFA\uFE0F Go to\u2026') + DEST.map((d) => { const lock = d[0] === 'beach' && !open, lunaLock = d[0] === 'luna' && !(GP.Luna && GP.Luna.can()); return '<button class="areaBtn' + (lunaLock ? ' lunaLock' : '') + '" data-a="' + (lunaLock ? 'luTeaser' : 'goto') + '" data-v="' + d[0] + '"' + (lock ? ' disabled' : '') + '><span class="ai">' + d[1] + '</span><span><b>' + d[2] + (d[0] === 'luna' ? ' <em class="dlcTag">DLC</em>' : '') + '</b><small>' + (lock ? 'Unlock with a Beach Pass at the park gate' : lunaLock ? '\uD83D\uDD12 Luna Pack \u00b7 unlock at the DLC Machine 3000 in Grok Arcade' : '') + '</small></span></button>'; }).join(''));
 };
 
 /* ---------------- shop ---------------- */
 UI.shop = function (cat) {
   GS.shopCat = cat || GS.shopCat || 'food'; const s = sv(); cat = GS.shopCat;
   let h = head('\uD83D\uDECD\uFE0F Pet Shop \u00b7 \uD83E\uDE99 ' + s.coins) + '<div class="tabs">' + Object.keys(GP.CATS).map((k) => '<button class="' + (k === cat ? 'on' : '') + '" data-a="shopTab" data-v="' + k + '">' + GP.CATS[k].toUpperCase() + '</button>').join('') + '</div>';
-  h += '<div class="igrid shop">' + GP.itemsOf(cat).filter((k) => !GP.ITEMS[k].secret).map((k) => {
+  h += '<div class="igrid shop">' + GP.itemsOf(cat).filter((k) => !GP.ITEMS[k].secret && !GP.ITEMS[k].dlc).map((k) => {
     const it = GP.ITEMS[k], own = s.inv[k] || 0, uniq = cat === 'toy' || cat === 'acc', done = uniq && own;
     const sub = cat === 'food' ? '+' + it.h + ' food' + (it.fav ? ' \u00b7 \u2764\uFE0F ' + it.fav.map((x) => ({ dog: 'dogs', cat: 'cats', rat: 'rats', hamster: 'hamsters', bird: 'birds', bunny: 'bunnies', tortoise: 'tortoises', pony: 'ponies', fish: 'fish', dragon: 'dragons', hedgehog: 'hedgehogs', robodog: 'robots' })[x]).join(', ') : '') + (own ? ' \u00b7 have ' + own : '') : cat === 'toy' ? (it.note || '+' + it.f + ' fun per fetch') : cat === 'acc' ? it.slot + ' \u00b7 style +' + it.style : cat === 'furn' ? 'comfort +' + it.comfort + (own ? ' \u00b7 own ' + own : '') : it.desc;
     return '<div class="ibtn sh"><i>' + it.icon + '</i><b>' + esc(it.name) + '</b><small>' + esc(sub) + '</small>' + (done ? '<button class="btn small alt" disabled>OWNED</button>' : '<button class="btn small primary" data-a="buy" data-v="' + k + '"' + (s.coins < it.price ? ' disabled' : '') + '>\uD83E\uDE99 ' + it.price + '</button>') + '</div>';

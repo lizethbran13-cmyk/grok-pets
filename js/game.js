@@ -417,7 +417,7 @@ function walkTick(dist) {
 }
 function finishFind(p, o) {
   const f = GS.find; GS.find = null; const r = Math.random();
-  if (r < 0.08) { const opts = GP.itemsOf('acc').filter((k) => !save.inv[k] && GP.ITEMS[k].price <= 110); if (opts.length) { const k = opts[Math.floor(Math.random() * opts.length)]; save.inv[k] = 1; G.toast('\u2728 ' + p.name + ' dug up a ' + GP.ITEMS[k].name + '!'); Snd.fx('treasure'); W.fx('star', f.x, 0.6, f.z, 8); persist(); return; } }
+  if (r < 0.08) { const opts = GP.itemsOf('acc').filter((k) => !save.inv[k] && GP.ITEMS[k].price <= 110 && !GP.ITEMS[k].dlc); if (opts.length) { const k = opts[Math.floor(Math.random() * opts.length)]; save.inv[k] = 1; G.toast('\u2728 ' + p.name + ' dug up a ' + GP.ITEMS[k].name + '!'); Snd.fx('treasure'); W.fx('star', f.x, 0.6, f.z, 8); persist(); return; } }
   if (r < 0.35) { const foods = ['kibble', 'seeds', 'veggie', 'fishsnack', 'cupcake']; const k = foods[Math.floor(Math.random() * foods.length)]; save.inv[k] = (save.inv[k] || 0) + 1; G.toast('\uD83C\uDF81 ' + p.name + ' found a ' + GP.ITEMS[k].name + '!'); Snd.fx('treasure'); }
   else { const c = f.beach ? 12 + Math.floor(Math.random() * 24) : 5 + Math.floor(Math.random() * 14); G.addCoins(c); G.toast('\uD83E\uDE99 ' + p.name + ' dug up ' + c + ' coins!'); W.fx('coin', f.x, 0.5, f.z, 5); }
   G.bump(p, 'f', 4); G.addXP(p, 4); o.P.play('happy', 1); persist();
@@ -539,6 +539,7 @@ function interact(h) {
     case 'vet': if (h.id === 'vet_desk' && GP.NPC && GP.NPC.talk('pawla')) break; G.UI.vet(h.tab); break;
     case 'stand': G.UI.games(h.beach); break;
     case 'gate': G.UI.gate(); break;
+    case 'luna': if (GP.Luna) GP.Luna.interact(h); break;
   }
 }
 function pressAct() {
@@ -736,7 +737,7 @@ function updateMe(dt) {
     else { ix = dx / d; iz = dz / d; mag = 1; if (d < g.best - 0.05) { g.best = d; g.stuck = 0; } else { g.stuck += dt; if (g.stuck > 0.6) GS.goal = null; } }
   }
   if (mag > 1) { ix /= mag; iz /= mag; mag = 1; }
-  const sp = (W.cur.id === 'town' ? 6.2 : 4.6) * mag;
+  const sp = (W.cur.id === 'town' || W.cur.outdoor ? 6.2 : 4.6) * mag;
   if (mag > 0.05) {
     const r = W.move(W.cur, m.x, m.z, ix * sp * dt, iz * sp * dt, 0.36), moved = Math.hypot(r[0] - m.x, r[1] - m.z);
     m.x = r[0]; m.z = r[1]; m.sp = moved / Math.max(dt, 1e-3); walkTick(moved);

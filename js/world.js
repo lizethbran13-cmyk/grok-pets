@@ -243,9 +243,9 @@ function shelf(g, x, z, label, items, col, ry) {
 }
 function buildShop() {
   const A = room('shop', 20, 14, tileTex('#fff7ed', '#fde2e4', 10), '#fce7f3', { bg: '#f3d7ec' }), g = A.g;
-  shelf(g, -6, -6.3, 'FOOD', GP.itemsOf('food'), '#f97316'); obsB(A, -8, -4, -7, -5.9);
-  shelf(g, 0, -6.3, 'TOYS', GP.itemsOf('toy'), '#22c55e'); obsB(A, -2, 2, -7, -5.9);
-  shelf(g, 6, -6.3, 'ACCESSORIES', GP.itemsOf('acc').slice(0, 12), '#a855f7'); obsB(A, 4, 8, -7, -5.9);
+  shelf(g, -6, -6.3, 'FOOD', baseItems('food'), '#f97316'); obsB(A, -8, -4, -7, -5.9);
+  shelf(g, 0, -6.3, 'TOYS', baseItems('toy'), '#22c55e'); obsB(A, -2, 2, -7, -5.9);
+  shelf(g, 6, -6.3, 'ACCESSORIES', baseItems('acc').slice(0, 12), '#a855f7'); obsB(A, 4, 8, -7, -5.9);
   hot(A, { id: 'shelf_food', kind: 'shelf', cat: 'food', x: -6, z: -5.0, reach: 2.2, name: 'Food Shelf', label: 'SHOP' });
   hot(A, { id: 'shelf_toy', kind: 'shelf', cat: 'toy', x: 0, z: -5.0, reach: 2.2, name: 'Toy Shelf', label: 'SHOP' });
   hot(A, { id: 'shelf_acc', kind: 'shelf', cat: 'acc', x: 6, z: -5.0, reach: 2.2, name: 'Accessories', label: 'SHOP' });
@@ -299,6 +299,8 @@ function buildAdopt() {
   const an = MD.person({ shirt: '#f59e0b', hair: '#111827' }); an.g.position.set(0, 0, 0.5); g.add(an.g); W.adoptNpc = an; obsC(A, 0, 0.5, 0.4);
   A.label = 'Adoption Center'; A.zone = () => 'Adoption Center';
 }
+W.lib = { newArea, hot, rect, obsB, obsC, ground, marker, room, signPlane, shelf, tileTex, woodTex, windowOn, canvasTex };
+const baseItems = (c) => GP.itemsOf(c).filter((k) => !GP.ITEMS[k].dlc);
 W.build = function () { buildTown(); buildHome(); buildShop(); buildVet(); buildAdopt(); newArea('arena', { bg: '#a8e6ff' }); };
 
 /* ---------------- pens: show today's adoptable pets ---------------- */

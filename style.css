@@ -316,3 +316,13 @@ body.inchaos #toasts { top: auto; bottom: calc(222px + var(--sb)); }
 .chRes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; } .chRes div { background: #faf5ff; border-radius: 14px; padding: 8px 4px; text-align: center; color: #3a1747; } .chRes b { display: block; font-size: 22px; } .chRes small { font-size: 12px; }
 .chGoalsRes { display: flex; flex-direction: column; gap: 4px; margin: 6px 0; } .chGoalsRes .chGoal { font-size: 14px; background: #f3f4f6; }
 .how { text-align: left; padding-left: 22px; font-size: 15px; line-height: 1.35; } .how li { margin: 5px 0; } #pnlCard .row { margin-top: 8px; flex-wrap: wrap; }
+/* Luna Pack DLC */
+.lunaPics{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+.lunaPics figure{margin:0;width:62px;text-align:center;background:linear-gradient(#312e81,#1e1b4b);border-radius:12px;padding:4px;border:2px solid #a78bfa}
+.lunaPics img{width:54px;height:54px}.lunaPics figcaption{font-size:10px;color:#e0e7ff;font-weight:800;line-height:1.1}
+.lunaLockMsg{color:#6d28d9}
+.lunaGuest{color:#7c3aed;font-weight:700}
+.lunaBadge{display:block;margin:6px auto 0;padding:7px 12px;border-radius:999px;background:linear-gradient(90deg,#312e81,#6d28d9);color:#fef9c3;font-weight:900;font-size:13px;text-decoration:none;text-align:center;max-width:260px;box-shadow:0 0 14px #a78bfa88}
+.lunaBadge.own{background:linear-gradient(90deg,#6d28d9,#db2777)}
+.areaBtn.lunaLock{opacity:.9;background:linear-gradient(90deg,#ede9fe,#fff)}
+.dlcTag{font-style:normal;font-size:10px;background:#6d28d9;color:#fff;border-radius:6px;padding:1px 5px;margin-left:4px}
