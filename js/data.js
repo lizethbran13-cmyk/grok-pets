@@ -40,7 +40,7 @@ GP.FAMILY = [
   { id: 'candy', sp: 'schnauzer', name: 'Candy', col: ['#8e939c', '#eceef1'], acc: { neck: 'pinkcollar' }, blurb: 'A sweet, bouncy miniature schnauzer with a fluffy beard.', goal: 'Walk 300 m with your pets', test: (s) => [s.stats.walk || 0, 300] },
   { id: 'martina', sp: 'tortoise', name: 'Martina', col: ['#8d6b3c', '#b59a68'], acc: { head: 'flower' }, blurb: 'A calm desert tortoise who loves veggies and sunny naps.', goal: 'Reach level 3 with any pet', test: (s) => [Math.max(0, ...s.pets.map((p) => p.lv)), 3] },
   { id: 'luna', sp: 'rat', name: 'Luna', col: ['#8f93a3', '#f4f2f7'], acc: { head: 'bow' }, blurb: 'A curious fancy rat with soft moon-grey fur.', goal: 'Teach any pet a trick', test: (s) => [s.stats.learned || 0, 1] },
-  { id: 'pirat', sp: 'rat', name: 'Pi-rat', col: ['#b98b62', '#f6eadb'], oneEye: 1, acc: { neck: 'bandana' }, blurb: 'A brave little fancy rat with one eye and a big heart. Arr!', goal: 'Play 3 mini games', test: (s) => [s.stats.games || 0, 3] },
+  { id: 'pirat', sp: 'rat', name: 'Pi-rat', col: ['#f8f6f2', '#ffffff'], oneEye: 1, acc: { neck: 'bandana' }, blurb: 'A brave little fancy rat with one eye and a big heart. Arr!', goal: 'Play 3 mini games', test: (s) => [s.stats.games || 0, 3] },
   { id: 'snowie', sp: 'rat', name: 'Snowie', col: ['#fbfbfb', '#ffe4ec'], eye: '#d9466f', acc: {}, blurb: 'A snow-white fancy rat with rosy eyes.', goal: 'Own 3 pets', test: (s) => [s.pets.length, 3] }
 ];
 GP.familyById = (id) => GP.FAMILY.find((f) => f.id === id);
